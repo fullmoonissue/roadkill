@@ -1,0 +1,10 @@
+assets/*
+!assets/.gitkeep
+
+assets/break/*
+!assets/break
+!assets/break/.gitkeep
+
+assets/work/*
+!assets/work
+!assets/work/.gitkeep
