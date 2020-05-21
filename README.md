@@ -4,7 +4,7 @@
 
 Roadkill is a VLC Extension to setup work / break sequences.
 
-This project was made just to know how to create a VLC Extension.
+At first, this project was made just to know how to create a VLC Extension.
 
 ### About the name
 
@@ -14,50 +14,54 @@ This project was made just to know how to create a VLC Extension.
 
 If you want to create a VLC extension, here are the functions to declare :
 
-* descriptor() : This function allows to discover your VLC extension into the VLC menu about extensions
+* descriptor() : This function allows to discover your VLC extension into the VLC menu about extensions (must return a lua table)
 * activate() : This function is called when you select the extension into the VLC menu about extensions
 * close() : This function is called when you close a dialog box (if at least one is created for the extension)
 * deactivate() : This function is called when you re-select (unselect) the extension into the VLC menu about extensions
 
 ## Setup
 
-First, `git clone` or download the project.
+First, `git clone` or [download](https://github.com/fullmoonissue/roadkill/archive/master.zip) (then unzip) the project.
 
 In the `roadkill.lua` file, you have to fill the `configuration` variable.
 
 The root keys that will be treated are :
 
-* work-start : if you want a medium to be launched before every exercices
-* work-end : if you want a medium to be launched after every exercices
-* work-items : exercices (as a list of medium)
+* `work-start` : if you want a medium to be launched before every exercices
+* `work-end` : if you want a medium to be launched after every exercices
+* `work-items` : exercices (as a list of medium)
 
-Media and their associated keys :
+**Type of medium and associated keys**
 
-1] File
+_File (image, sound, video)_
 
-* The key `file` is awaited with a path as value.
-* The key `duration` can be set with a duration in seconds as value.
+* Required
+  * `file`, location of the medium to add to the playlist.
+* Optional
+  * `duration`, duration (in seconds) of the medium.
+  * `start`, time (in seconds) when the medium start.
 
-⚠️ Be aware that if the medium is an image, look at the menu `Codecs` > `Demux` > `Image` properties and assign to the duration a bigger value than yours (or -1 to show the image indefinitely).
+_Folder_
 
-2] Folder
+* Required
+  * `folder`, location of the folder to scan (then add the files to the playlist).
+* Optional
+  * `random`, select randomly media.
+  * `nbElements`, number of selected media.
+  * any of the optional keys from `File`
 
-* The key `folder` is awaited with a path as value.
-* The key `random` can be set with a boolean as value.
-* The key `nbElements` can be set with an integer as value (to keep only a fragment of all elements in the folder).
-* The key `duration` can be set with a duration in seconds as value.
+_Url_
 
-⚠️ Same warning as `1] File`
+* Required
+  * `url`, url of the medium.
 
-3] Url
+⚠️ No option can be defined.
 
-* The key `url` is awaited with an url as value.
-
-⚠️ The duration can't be defined (neither the VLC `stop-time` option nor the url of youtube (for example) with an `end` flag in the url isn't working).
+ℹ️ Neither VLC options nor embedded url with query parameters (like with youtube) works.
 
 ### Examples
 
-1] Tabata Training
+_Tabata Training_
 
 ```
 local configuration = {
@@ -87,7 +91,7 @@ local configuration = {
 }
 ```
 
-2] Pomodoro Timing
+_Pomodoro Timing_
 
 ```
 local configuration = {
@@ -136,7 +140,7 @@ local configuration = {
 }
 ```
 
-3] New language training exercices
+_New language training exercices_
 
 ```
 local configuration = {
@@ -153,7 +157,7 @@ local configuration = {
 
 ## Process
 
-ℹ️ Take note that the paths and menus displayed are for the french version 3.0.10 of VLC on Mac.
+ℹ️ Take note that the paths and menus displayed are for the version 3.0.10 of VLC on Mac.
 
 ### Enable the extension
 
@@ -173,13 +177,30 @@ The two pages that helped me to create it were :
 
 - [🔗](https://www.videolan.org/developers/vlc/share/lua/README.txt) The listing of the available lua modules for VLC
 - [🔗](https://github.com/exebetche/vlsub/blob/master/vlsub.lua) The existing VLSub Extension
-- [🔗](https://wiki.videolan.org/VLC_command-line_help) The options for command line (and items into the playlist)
+- [🔗](https://wiki.videolan.org/VLC_command-line_help) The options for command line (which are the same for items added into the playlist)
 
 ## Licence
 
 MIT
 
+## Troubleshooting
+
+**Wanted to show an image during x seconds, it's only displayed during y seconds**
+
+To display during a long time an image on VLC, you have to setup a duration located in : `Settings` > `Codecs` (`All`) > `Demux` > `Image`.
+
+Either the value will be bigger than the desired number of seconds or the value will be -1 (display indefinitely).
+
+## Development
+
+**Messages (debug, ...)**
+
+VLC brings a way to add messages (`vlc.msg.dgb('...')`, ...) that you will be able to see after opening the associated window (`Window` > `Messages...`).
+
+All types of messages are written in the [documentation](https://www.videolan.org/developers/vlc/share/lua/README.txt), section `Messages`.
+
 ## Changelog
 
+* 2.1.0 : Add `start` option
 * 2.0.0 : Configuration is now done into a lua table (and the dialog box was removed)
-* 1.0.0 : Initial deploy (configuration by specific files and folders)
+* 1.0.0 : Initial deploy (configuration made by specific files and folders)
