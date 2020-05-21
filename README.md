@@ -203,6 +203,8 @@ All types of messages are written in the [documentation](https://www.videolan.or
 
 ## Changelog
 
+* 2.3.0
+  * (Feature) All root keys can be single or multiple
 * 2.2.0
   * (Feature) Add `work-before-all` and `work-after-all` root keys
   * (Fix) Fix `start` and `duration` options combined
