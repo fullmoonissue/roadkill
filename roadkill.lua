@@ -8,7 +8,7 @@ local configuration = {}
 function descriptor()
     return {
         title = 'Roadkill',
-        version = '2.1.0',
+        version = '2.2.0',
         author = 'fullmoonissue',
         url = 'http://www.fullmoonissue.net/',
         shortdesc = 'Roadkill, VLC Extension';
@@ -21,6 +21,7 @@ function activate()
     vlc.playlist.stop()
     vlc.playlist.clear()
 
+    -- Shuffle a table
     -- @see https://gist.github.com/Uradamus/10323382
     local function shuffle(tbl)
         math.randomseed(os.time())
@@ -32,6 +33,7 @@ function activate()
         return tbl
     end
 
+    -- Add item into the playlist if the item is properly setup
     local function handleItemPlaylist(name, properties, playlistItems)
         local path
         if properties['url'] ~= nil then
@@ -44,16 +46,21 @@ function activate()
             local item = {
                 ['path'] = path,
                 ['name'] = name,
+                ['options'] = {},
             }
-            if properties['duration'] ~= nil then
-                item['options'] = {
-                    string.format('stop-time=%d', properties['duration']),
-                }
-            end
+            local start = 0
             if properties['start'] ~= nil then
-                item['options'] = {
-                    string.format('start-time=%d', properties['start']),
-                }
+                start = properties['start']
+                table.insert(
+                    item['options'],
+                    string.format('start-time=%d', properties['start'])
+                )
+            end
+            if properties['duration'] ~= nil then
+                table.insert(
+                    item['options'],
+                    string.format('stop-time=%d', start + properties['duration'])
+                )
             end
 
             table.insert(playlistItems, item)
@@ -61,52 +68,60 @@ function activate()
     end
 
     local playlistItems = {}
-    for _, workItem in ipairs(configuration['work-items']) do
-        if workItem['folder'] ~= nil then
-            local nbElements
-            if workItem['nbElements'] ~= nil then
-                nbElements = workItem['nbElements']
-            end
+    if configuration['work-before-all'] ~= nil then
+        handleItemPlaylist('Before Starting !', configuration['work-before-all'], playlistItems)
+    end
+    if configuration['work-items'] ~= nil then
+        for _, workItem in ipairs(configuration['work-items']) do
+            if workItem['folder'] ~= nil then
+                local nbElements
+                if workItem['nbElements'] ~= nil then
+                    nbElements = workItem['nbElements']
+                end
 
-            local workFiles = {}
-            for _, workFile in ipairs(vlc.io.readdir(workItem['folder'])) do
-                if workFile ~= '.' and workFile ~= '..' then
-                    if nbElements == nil or nbElements > #workFiles then
-                        table.insert(workFiles, workItem['folder'] .. '/' .. workFile)
+                local workFiles = {}
+                for _, workFile in ipairs(vlc.io.readdir(workItem['folder'])) do
+                    if workFile ~= '.' and workFile ~= '..' then
+                        if nbElements == nil or nbElements > #workFiles then
+                            table.insert(workFiles, workItem['folder'] .. '/' .. workFile)
+                        end
                     end
                 end
-            end
 
-            if workItem['random'] ~= nil and workItem['random'] then
-                workFiles = shuffle(workFiles)
-            end
-
-            for _, workFile in ipairs(workFiles) do
-                local fpWorkItem = { ['file'] = workFile }
-                if workItem['duration'] ~= nil then
-                    fpWorkItem['duration'] = workItem['duration']
-                end
-                if workItem['start'] ~= nil then
-                    fpWorkItem['start'] = workItem['start']
+                if workItem['random'] ~= nil and workItem['random'] then
+                    workFiles = shuffle(workFiles)
                 end
 
+                for _, workFile in ipairs(workFiles) do
+                    local fpWorkItem = { ['file'] = workFile }
+                    if workItem['duration'] ~= nil then
+                        fpWorkItem['duration'] = workItem['duration']
+                    end
+                    if workItem['start'] ~= nil then
+                        fpWorkItem['start'] = workItem['start']
+                    end
+
+                    if configuration['work-start'] ~= nil then
+                        handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
+                    end
+                    handleItemPlaylist('Work !', fpWorkItem, playlistItems)
+                    if configuration['work-end'] ~= nil then
+                        handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
+                    end
+                end
+            else
                 if configuration['work-start'] ~= nil then
                     handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
                 end
-                handleItemPlaylist('Work !', fpWorkItem, playlistItems)
+                handleItemPlaylist('Work !', workItem, playlistItems)
                 if configuration['work-end'] ~= nil then
                     handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
                 end
             end
-        else
-            if configuration['work-start'] ~= nil then
-                handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
-            end
-            handleItemPlaylist('Work !', workItem, playlistItems)
-            if configuration['work-end'] ~= nil then
-                handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
-            end
         end
+    end
+    if configuration['work-after-all'] ~= nil then
+        handleItemPlaylist('Finish !', configuration['work-after-all'], playlistItems)
     end
 
     -- /!\ Important note : the method "vlc.playlist.add" have to be called only once

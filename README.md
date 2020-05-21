@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Roadkill is a VLC Extension to setup work / break sequences.
+Roadkill is a VLC Extension to setup a playlist with work / break sequences.
 
 At first, this project was made just to know how to create a VLC Extension.
 
@@ -25,11 +25,13 @@ First, `git clone` or [download](https://github.com/fullmoonissue/roadkill/archi
 
 In the `roadkill.lua` file, you have to fill the `configuration` variable.
 
-The root keys that will be treated are :
+**Root keys**
 
+* `work-before-all` : if you want a medium to be launched only once at the beginning of the playlist
 * `work-start` : if you want a medium to be launched before every exercices
-* `work-end` : if you want a medium to be launched after every exercices
 * `work-items` : exercices (as a list of medium)
+* `work-end` : if you want a medium to be launched after every exercices
+* `work-after-all` : if you want a medium to be launched only once at the end of the playlist
 
 **Type of medium and associated keys**
 
@@ -99,10 +101,6 @@ local configuration = {
         ['file'] = '/path/to/musics/get-ready.mp3',
         ['duration'] = 5,
     },
-    ['work-end'] = {
-        ['file'] = '/path/to/musics/take-a-break.mp3',
-        ['duration'] = 5,
-    },
     ['work-items'] = {
         {
             ['file'] = '/path/to/todos/todo-1.png',
@@ -136,6 +134,10 @@ local configuration = {
             ['file'] = '/path/to/musics/long-chill.mp3',
             ['duration'] = 25 * 60, -- 25 minutes
         },
+    },
+    ['work-end'] = {
+        ['file'] = '/path/to/musics/take-a-break.mp3',
+        ['duration'] = 5,
     },
 }
 ```
@@ -201,6 +203,12 @@ All types of messages are written in the [documentation](https://www.videolan.or
 
 ## Changelog
 
-* 2.1.0 : Add `start` option
-* 2.0.0 : Configuration is now done into a lua table (and the dialog box was removed)
-* 1.0.0 : Initial deploy (configuration made by specific files and folders)
+* 2.2.0
+  * (Feature) Add `work-before-all` and `work-after-all` root keys
+  * (Fix) Fix `start` and `duration` options combined
+* 2.1.0
+  * (Feature) Add `start` option
+* 2.0.0
+  * (BC Break) Configuration is now done into a lua table and the dialog box was removed
+* 1.0.0
+  * (Feature) Initial deploy (configuration made by specific files and folders)
