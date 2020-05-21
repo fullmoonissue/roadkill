@@ -8,7 +8,7 @@ local configuration = {}
 function descriptor()
     return {
         title = 'Roadkill',
-        version = '2.2.0',
+        version = '2.3.0',
         author = 'fullmoonissue',
         url = 'http://www.fullmoonissue.net/',
         shortdesc = 'Roadkill, VLC Extension';
@@ -67,11 +67,29 @@ function activate()
         end
     end
 
+    -- Iterate overs items to add them into the playlist
+    local function handleItemsPlaylist(name, items, playlistItems)
+        for index, item in ipairs(items) do
+            handleItemPlaylist(
+                string.format(name, index),
+                item,
+                playlistItems
+            )
+        end
+    end
+
     local playlistItems = {}
     if configuration['work-before-all'] ~= nil then
-        handleItemPlaylist('Before Starting !', configuration['work-before-all'], playlistItems)
+        if configuration['work-before-all'][1] ~= nil then
+            handleItemsPlaylist('[%d] Before Starting !', configuration['work-before-all'], playlistItems)
+        else
+            handleItemPlaylist('Before Starting !', configuration['work-before-all'], playlistItems)
+        end
     end
     if configuration['work-items'] ~= nil then
+        if configuration['work-items'][1] == nil then
+            configuration['work-items'] = {configuration['work-items']}
+        end
         for _, workItem in ipairs(configuration['work-items']) do
             if workItem['folder'] ~= nil then
                 local nbElements
@@ -102,26 +120,46 @@ function activate()
                     end
 
                     if configuration['work-start'] ~= nil then
-                        handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
+                        if configuration['work-start'][1] ~= nil then
+                            handleItemsPlaylist('[%d] Let\'s Go !', configuration['work-start'], playlistItems)
+                        else
+                            handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
+                        end
                     end
                     handleItemPlaylist('Work !', fpWorkItem, playlistItems)
                     if configuration['work-end'] ~= nil then
-                        handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
+                        if configuration['work-end'][1] ~= nil then
+                            handleItemsPlaylist('[%d] Take a break !', configuration['work-end'], playlistItems)
+                        else
+                            handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
+                        end
                     end
                 end
             else
                 if configuration['work-start'] ~= nil then
-                    handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
+                    if configuration['work-start'][1] ~= nil then
+                        handleItemsPlaylist('[%d] Let\'s Go !', configuration['work-start'], playlistItems)
+                    else
+                        handleItemPlaylist('Let\'s Go !', configuration['work-start'], playlistItems)
+                    end
                 end
                 handleItemPlaylist('Work !', workItem, playlistItems)
                 if configuration['work-end'] ~= nil then
-                    handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
+                    if configuration['work-end'][1] ~= nil then
+                        handleItemsPlaylist('[%d] Take a break !', configuration['work-end'], playlistItems)
+                    else
+                        handleItemPlaylist('Take a break !', configuration['work-end'], playlistItems)
+                    end
                 end
             end
         end
     end
     if configuration['work-after-all'] ~= nil then
-        handleItemPlaylist('Finish !', configuration['work-after-all'], playlistItems)
+        if configuration['work-after-all'][1] ~= nil then
+            handleItemsPlaylist('[%d] Finish !', configuration['work-after-all'], playlistItems)
+        else
+            handleItemPlaylist('Finish !', configuration['work-after-all'], playlistItems)
+        end
     end
 
     -- /!\ Important note : the method "vlc.playlist.add" have to be called only once
