@@ -68,6 +68,10 @@ _Tabata Training_
 
 ```
 local configuration = {
+    ['work-before-all'] = {
+        ['file'] = '/path/to/musics/warm-up.mp3',
+        ['duration'] = 5 * 60, -- 5 minutes
+    },
     ['work-end'] = {
         ['file'] = '/path/to/musics/take-a-break.mp3',
         ['duration'] = 10,
@@ -133,21 +137,6 @@ local configuration = {
 }
 ```
 
-_New language training exercices_
-
-```
-local configuration = {
-    ['work-items'] = {
-        {
-            ['folder'] = '/path/to/language-exercices-folder',
-            ['random'] = true,
-            ['nbElements'] = 20,
-            ['duration'] = 10,
-        },
-    },
-}
-```
-
 ## Process
 
 ℹ️ Take note that the paths and menus displayed are for the version 3.0.10 of VLC on Mac.
@@ -172,7 +161,7 @@ The pages that helped me to create it were :
 - [🔗](https://github.com/exebetche/vlsub/blob/master/vlsub.lua) The existing VLSub Extension
 - [🔗](https://wiki.videolan.org/VLC_command-line_help) The options for command line (which are the same for items added into the playlist)
 
-## Licence
+## License
 
 MIT
 
@@ -194,6 +183,14 @@ All types of messages are explained in the [documentation](https://www.videolan.
 
 ## Changelog
 
+* 2.4.1
+  * (Clean) Add validations on configuration
+  * (Clean) Setup and add tests
+    * Luanit installed
+    * Makefile task added (install & test)
+  * (Clean) Code Style Checker
+    * Luacheck installed
+    * Makefile task added (install & cs-check)
 * 2.4.0
   * (Feature) Add `loop` for `folder` to repeat many times an item
 * 2.3.1
