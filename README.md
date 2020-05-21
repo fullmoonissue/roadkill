@@ -40,7 +40,7 @@ _File (image, sound, video)_
 * Required
   * `file`, location of the medium to add to the playlist.
 * Optional
-  * `duration`, duration (in seconds) of the medium.
+  * `duration`, duration (in seconds) of the medium (have to be bigger than `start` (if set)).
   * `start`, time (in seconds) when the medium start.
 
 _Folder_
@@ -203,11 +203,16 @@ All types of messages are written in the [documentation](https://www.videolan.or
 
 ## Changelog
 
+* 2.3.1
+  * (Fix) `folder` key not correctly treated in root keys other than `work-items`
+  * (Fix) `duration` have to be absolute, not relative to `start`
+  * (Fix) Randomization not correctly handled if `shuffle()` is called multiple times on the same second
+  * (Clean) Code quite rewritten
 * 2.3.0
-  * (Feature) All root keys can be single or multiple
+  * (Feature) All root keys can handle single or multiple item(s)
 * 2.2.0
   * (Feature) Add `work-before-all` and `work-after-all` root keys
-  * (Fix) Fix `start` and `duration` options combined
+  * (Fix) `duration` not correct if `start` is set
 * 2.1.0
   * (Feature) Add `start` option
 * 2.0.0
