@@ -8,7 +8,7 @@ local configuration = {}
 function descriptor()
     return {
         title = 'Roadkill',
-        version = '2.0.0',
+        version = '2.1.0',
         author = 'fullmoonissue',
         url = 'http://www.fullmoonissue.net/',
         shortdesc = 'Roadkill, VLC Extension';
@@ -50,6 +50,11 @@ function activate()
                     string.format('stop-time=%d', properties['duration']),
                 }
             end
+            if properties['start'] ~= nil then
+                item['options'] = {
+                    string.format('start-time=%d', properties['start']),
+                }
+            end
 
             table.insert(playlistItems, item)
         end
@@ -80,6 +85,9 @@ function activate()
                 local fpWorkItem = { ['file'] = workFile }
                 if workItem['duration'] ~= nil then
                     fpWorkItem['duration'] = workItem['duration']
+                end
+                if workItem['start'] ~= nil then
+                    fpWorkItem['start'] = workItem['start']
                 end
 
                 if configuration['work-start'] ~= nil then
