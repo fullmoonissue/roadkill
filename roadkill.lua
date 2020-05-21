@@ -8,7 +8,7 @@ local configuration = {}
 function descriptor()
     return {
         title = 'Roadkill',
-        version = '2.3.1',
+        version = '2.4.0',
         author = 'fullmoonissue',
         url = 'http://www.fullmoonissue.net/',
         shortdesc = 'Roadkill, VLC Extension';
@@ -118,6 +118,17 @@ function activate()
                     end
                 end
                 workFiles = selectedWorkFiles
+            end
+
+            -- ... repeat items, if wanted ...
+            if workItem['loop'] ~= nil then
+                local repeatedWorkFiles = {}
+                for _, workFile in ipairs(workFiles) do
+                    for _ = 1, workItem['loop'] do
+                        table.insert(repeatedWorkFiles, workFile)
+                    end
+                end
+                workFiles = repeatedWorkFiles
             end
 
             -- ... create new items for each file (and keeping the initial vlc options)

@@ -48,8 +48,9 @@ _Folder_
 * Required
   * `folder`, location of the folder to scan (then add the files to the playlist).
 * Optional
-  * `random`, select randomly media.
-  * `nbElements`, number of selected media.
+  * `random`, select media randomly.
+  * `loop`, number of repetition of an item.
+  * `nbElements`, number of media to keep.
   * any of the optional keys from `File`
 
 _Url_
@@ -73,22 +74,12 @@ local configuration = {
     },
     ['work-items'] = {
         {
-            ['file'] = '/path/to/videos/burpees.mp4',
+            ['folder'] = '/path/to/videos/tabata',
+            ['random'] = true,
+            ['loop'] = 8,
+            ['nbElements'] = 6,
             ['duration'] = 20,
         },
-        {
-            ['file'] = '/path/to/videos/burpees.mp4',
-            ['duration'] = 20,
-        },
-        {
-            ['file'] = '/path/to/videos/sprint.mp4',
-            ['duration'] = 20,
-        },
-        {
-            ['file'] = '/path/to/videos/sprint.mp4',
-            ['duration'] = 20,
-        },
-        -- ...
     },
 }
 ```
@@ -175,7 +166,7 @@ Then :
 
 ## Documentation
 
-The two pages that helped me to create it were :
+The pages that helped me to create it were :
 
 - [🔗](https://www.videolan.org/developers/vlc/share/lua/README.txt) The listing of the available lua modules for VLC
 - [🔗](https://github.com/exebetche/vlsub/blob/master/vlsub.lua) The existing VLSub Extension
@@ -199,10 +190,12 @@ Either the value will be bigger than the desired number of seconds or the value 
 
 VLC brings a way to add messages (`vlc.msg.dgb('...')`, ...) that you will be able to see after opening the associated window (`Window` > `Messages...`).
 
-All types of messages are written in the [documentation](https://www.videolan.org/developers/vlc/share/lua/README.txt), section `Messages`.
+All types of messages are explained in the [documentation](https://www.videolan.org/developers/vlc/share/lua/README.txt), section `Messages`.
 
 ## Changelog
 
+* 2.4.0
+  * (Feature) Add `loop` for `folder` to repeat many times an item
 * 2.3.1
   * (Fix) `folder` key not correctly treated in root keys other than `work-items`
   * (Fix) `duration` have to be absolute, not relative to `start`
