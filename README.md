@@ -175,14 +175,32 @@ Either the value will be bigger than the desired number of seconds or the value 
 
 ## Development
 
+### VLC
+
 **Messages (debug, ...)**
 
 VLC brings a way to add messages (`vlc.msg.dgb('...')`, ...) that you will be able to see after opening the associated window (`Window` > `Messages...`).
 
 All types of messages are explained in the [documentation](https://www.videolan.org/developers/vlc/share/lua/README.txt), section `Messages`.
 
+### Code Style
+
+    # First, install luacheck (sudo may be required)
+    make install
+    # Then, launch the check
+    make cs-check
+
+### Tests
+
+    # First, install luanit (sudo may be required)
+    make install
+    # Then, launch the tests
+    make test
+
 ## Changelog
 
+* 2.5.0
+  * (Feature) Customize file name displayed in vlc
 * 2.4.1
   * (Clean) Add validations on configuration
   * (Clean) Setup and add tests

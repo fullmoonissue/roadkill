@@ -2,7 +2,29 @@
 -- [[ Configuration ]]
 -- --- --- --- --- --- ---
 
+-- @see #Setup in the README.md to know how to fill this variable
 local configuration = {}
+
+-- Keys (and associated type) available in root keys
+local keyTypes = {
+    file = 'string',
+    duration = 'number',
+    start = 'number',
+    folder = 'string',
+    random = 'boolean',
+    loop = 'number',
+    nbElements = 'number',
+    url = 'string',
+}
+
+-- Texts which are displayed in the playlist
+local texts = {
+    ['work-before-all'] = 'Before Starting !',
+    ['work-start'] = 'Let\'s Go !',
+    ['work-items'] = 'Work !',
+    ['work-end'] = 'Take a break !',
+    ['work-after-all'] = 'Finish !',
+}
 
 -- --- --- --- --- --- --- --- --- --- --- ---
 -- [[ Standalone functions (definitions) ]]
@@ -238,28 +260,18 @@ end
 -- /_/   /_/ |_|\____/\____/_____//____/____/
 
 local function isValid(config, messages)
+    local errorMessage = 'Key "%s" must be a %s in %s'
     if messages == nil then
         messages = {}
     end
-    local errorMessage = 'Key "%s" must be a %s in %s'
-    local fieldTypes = {
-        file = 'string',
-        duration = 'number',
-        start = 'number',
-        folder = 'string',
-        random = 'boolean',
-        loop = 'number',
-        nbElements = 'number',
-        url = 'string',
-    }
 
     for _, rootKey in ipairs({'work-before-all', 'work-start', 'work-items', 'work-end', 'work-after-all'}) do
         if config[rootKey] ~= nil then
             for _, item in ipairs(toList(config[rootKey])) do
-                for key, fieldType in pairs(fieldTypes) do
+                for key, keyType in pairs(keyTypes) do
                     if item[key] ~= nil then
-                        if type(item[key]) ~= fieldType then
-                            table.insert(messages, string.format(errorMessage, key, fieldType, rootKey))
+                        if type(item[key]) ~= keyType then
+                            table.insert(messages, string.format(errorMessage, key, keyType, rootKey))
                         end
                     end
                 end
@@ -274,6 +286,7 @@ local function process(config, playlistItems)
     if playlistItems == nil then
         playlistItems = {}
     end
+
     -- Transform work-items folder into work-items files
     local workItems = {}
     if config['work-items'] ~= nil then
@@ -285,18 +298,18 @@ local function process(config, playlistItems)
 
     -- Prepare all the items to be added to the playlist ...
     -- ... 1. items into the "work-before-all" root key ...
-    addItemsToPlaylist('Before Starting !', config['work-before-all'], playlistItems)
+    addItemsToPlaylist(texts['work-before-all'], config['work-before-all'], playlistItems)
     -- ... Then for each "work-items" root key items ...
     for _, workItem in ipairs(config['work-items']) do
         -- ... 2. items into the "work-start" root key
-        addItemsToPlaylist('Let\'s Go !', config['work-start'], playlistItems)
+        addItemsToPlaylist(texts['work-start'], config['work-start'], playlistItems)
         -- ... 3. the current work item
-        addItemToPlaylist('Work !', workItem, playlistItems)
+        addItemToPlaylist(texts['work-items'], workItem, playlistItems)
         -- ... 4. items into the "work-end" root key
-        addItemsToPlaylist('Take a break !', config['work-end'], playlistItems)
+        addItemsToPlaylist(texts['work-end'], config['work-end'], playlistItems)
     end
     -- ... 5. finally, items into the "work-after-all" root key ...
-    addItemsToPlaylist('Finish !', config['work-after-all'], playlistItems)
+    addItemsToPlaylist(texts['work-after-all'], config['work-after-all'], playlistItems)
 
     -- Give the playlist to VLC
     vlcGo(playlistItems)
@@ -596,6 +609,13 @@ if arg ~= nil then
     -- Test : Process
     -- --- --- --- ---
 
+    texts = {
+        ['work-before-all'] = 'text-work-before-all',
+        ['work-start'] = 'text-work-start',
+        ['work-items'] = 'text-work-items',
+        ['work-end'] = 'text-work-end',
+        ['work-after-all'] = 'text-work-after-all',
+    }
     function testProcess()
         local playlistItems = {}
         process(
@@ -626,42 +646,42 @@ if arg ~= nil then
         lu.assertEquals(
             {
                 {
-                    ['name'] = 'Before Starting !',
+                    ['name'] = 'text-work-before-all',
                     ['path'] = 'file://item-file-work-before-all',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Let\'s Go !',
+                    ['name'] = 'text-work-start',
                     ['path'] = 'file://item-file-work-start',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Work !',
+                    ['name'] = 'text-work-items',
                     ['path'] = 'file://item-file-work-item-1',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Take a break !',
+                    ['name'] = 'text-work-end',
                     ['path'] = 'file://item-file-work-end',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Let\'s Go !',
+                    ['name'] = 'text-work-start',
                     ['path'] = 'file://item-file-work-start',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Work !',
+                    ['name'] = 'text-work-items',
                     ['path'] = 'file://item-file-work-item-2',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Take a break !',
+                    ['name'] = 'text-work-end',
                     ['path'] = 'file://item-file-work-end',
                     ['options'] = {},
                 },
                 {
-                    ['name'] = 'Finish !',
+                    ['name'] = 'text-work-after-all',
                     ['path'] = 'file://item-file-work-after-all',
                     ['options'] = {},
                 },
