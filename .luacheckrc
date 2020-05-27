@@ -4,14 +4,15 @@ stds.roadkill = {
 
         "descriptor",
         "activate",
+        "close",
         "deactivate",
 
-        "testToList",
-        "testVlcGetMethodOption",
-        "testFlattenFolderItem",
-        "testAddItemToPlaylist",
-        "testAddItemsToPlaylist",
         "testIsValid",
-        "testProcess"
+        "testAddItem",
+        "testAddItems",
+        "testCompile",
+        "testCompileItem",
+        "testToList",
+        "testOptionMethod",
     },
 }

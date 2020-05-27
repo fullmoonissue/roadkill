@@ -1,9 +1,16 @@
-install:
+install: install-luacheck install-luaunit
+
+install-luacheck:
 	luarocks install luacheck
+
+install-luaunit:
 	luarocks install luaunit
 
 cs-check:
-	luacheck --std=min+roadkill roadkill.lua
+	luacheck --std=min+roadkill entrypoint.lua src tests
 
 test:
-	lua roadkill.lua -v
+	lua tests/configuration.lua -v
+	lua tests/playlist.lua -v
+	lua tests/utils.lua -v
+	lua tests/vlc/options.lua -v

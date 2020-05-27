@@ -4,8 +4,6 @@
 
 Roadkill is a VLC Extension to setup a playlist with work / break sequences.
 
-At first, this project was made just to know how to create a VLC Extension.
-
 ### About the name
 
 `Roadkill` is the name of the rat which follows `Sketch Turner` in the `Comix Zone` adventure.
@@ -19,11 +17,13 @@ If you want to create a VLC extension, here are the functions to declare :
 * close() : This function is called when you close a dialog box (if at least one is created for the extension)
 * deactivate() : This function is called when you re-select (unselect) the extension into the VLC menu about extensions
 
-## Setup
+### Glossary
 
-First, `git clone` or [download](https://github.com/fullmoonissue/roadkill/archive/master.zip) (then unzip) the project.
+**Configuration**
 
-In the `roadkill.lua` file, you have to fill the `configuration` variable.
+The meaning of the ui is to create (and launch) a configuration file (which prepare a playlist for VLC).
+
+A configuration is a lua table, containing some root keys with items (lua tables) inside, written into a file.
 
 **Root keys**
 
@@ -58,16 +58,12 @@ _Url_
 * Required
   * `url`, url of the medium.
 
-⚠️ No option can be defined.
-
-ℹ️ Neither VLC options nor embedded url with query parameters (like with youtube) works.
-
-### Examples
+### Examples of configuration file
 
 _Tabata Training_
 
 ```
-local configuration = {
+return {
     ['work-before-all'] = {
         ['file'] = '/path/to/musics/warm-up.mp3',
         ['duration'] = 5 * 60, -- 5 minutes
@@ -91,7 +87,7 @@ local configuration = {
 _Pomodoro Timing_
 
 ```
-local configuration = {
+return {
     ['work-start'] = {
         ['file'] = '/path/to/musics/get-ready.mp3',
         ['duration'] = 5,
@@ -137,18 +133,25 @@ local configuration = {
 }
 ```
 
-## Process
+## Enable the extension
 
-ℹ️ Take note that the paths and menus displayed are for the version 3.0.10 of VLC on Mac.
+ℹ️  Tested with :
+- VLC version : 3.0.10
+- OS : Mac
 
-### Enable the extension
+**First**
 
-When the [setup](#setup) is done, you have to symlink the `roadkill.lua` file into the VLC's extensions folder.
+    git clone https://github.com/fullmoonissue/roadkill.git
+    or
+    Download the project https://github.com/fullmoonissue/roadkill/archive/master.zip then unzip it
+
+**Then**
 
     cd /Applications/VLC.app/Contents/MacOS/share/lua/extensions
-    ln -s /path/to/roadkill/roadkill.lua roadkill.lua
+    ln -s /path/to/project/roadkill roadkill
+    ln -s roadkill/entrypoint.lua roadkill.lua
 
-Then :
+**Finally**
 
 1. (Re)Launch VLC
 2. Menu > VLC > Extensions > Roadkill
@@ -157,9 +160,9 @@ Then :
 
 The pages that helped me to create it were :
 
-- [🔗](https://www.videolan.org/developers/vlc/share/lua/README.txt) The listing of the available lua modules for VLC
-- [🔗](https://github.com/exebetche/vlsub/blob/master/vlsub.lua) The existing VLSub Extension
-- [🔗](https://wiki.videolan.org/VLC_command-line_help) The options for command line (which are the same for items added into the playlist)
+- [🔗](https://www.videolan.org/developers/vlc/share/lua/README.txt)  The listing of the available lua modules for VLC
+- [🔗](https://github.com/exebetche/vlsub/blob/master/vlsub.lua)  The VLSub Extension
+- [🔗](https://wiki.videolan.org/VLC_command-line_help)  The options for command line (which are the same for items added into the playlist)
 
 ## License
 
@@ -167,11 +170,16 @@ MIT
 
 ## Troubleshooting
 
-**Wanted to show an image during x seconds, it's only displayed during y seconds**
+**Want to show an image during x seconds but it's only displayed during y seconds**
 
 To display during a long time an image on VLC, you have to setup a duration located in : `Settings` > `Codecs` (`All`) > `Demux` > `Image`.
 
 Either the value will be bigger than the desired number of seconds or the value will be -1 (display indefinitely).
+
+**I have set a duration for an url but the video isn't stopping at the desired time**
+
+No way has been found to handle that. None of the file / folder options works for an url.
+Neither with VLC options nor with embedded url with query parameters (ex. with youtube : `https://www.youtube.com/embed/...?end=...`).
 
 ## Development
 
@@ -181,24 +189,33 @@ Either the value will be bigger than the desired number of seconds or the value 
 
 VLC brings a way to add messages (`vlc.msg.dgb('...')`, ...) that you will be able to see after opening the associated window (`Window` > `Messages...`).
 
-All types of messages are explained in the [documentation](https://www.videolan.org/developers/vlc/share/lua/README.txt), section `Messages`.
+All existing types of messages are in the [documentation](https://www.videolan.org/developers/vlc/share/lua/README.txt), section `Messages`.
 
 ### Code Style
 
-    # First, install luacheck (sudo may be required)
-    make install
-    # Then, launch the check
+    # First, install luacheck (launching command with sudo may be required)
+    make install-luacheck
+
+    # Then, launch the checks
     make cs-check
 
 ### Tests
 
-    # First, install luanit (sudo may be required)
-    make install
+    # First, install luanit (launching command with sudo may be required)
+    make install-luaunit
+
     # Then, launch the tests
     make test
 
 ## Changelog
 
+* 3.0.0
+  * (Feature) UI
+    * Configuration can be made thanks to an ui
+    * Configuration can be saved & load
+  * (BC Break) The commands into the [Enable the extension](#enable-the-extension) have changed
+  * (Clean) Split code across multiple files
+  * (Clean) Split tests across multiple files
 * 2.5.0
   * (Feature) Customize file name displayed in vlc
 * 2.4.1
@@ -226,4 +243,4 @@ All types of messages are explained in the [documentation](https://www.videolan.
 * 2.0.0
   * (BC Break) Configuration is now done into a lua table and the dialog box was removed
 * 1.0.0
-  * (Feature) Initial deploy (configuration made by specific files and folders)
+  * (MVP) First version (configuration made by specific files and folders)
