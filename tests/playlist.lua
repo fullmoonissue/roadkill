@@ -12,8 +12,8 @@ configuration.texts = {
 }
 
 -- Replace the initial readdir to avoid calling "real" VLC calls in tests
-local vlcWraps = require('src/vlc/wraps')
-vlcWraps.readdir = function()
+local _vlc_ = require('src/vlc')
+_vlc_.readdir = function()
     return {
         'work-item-1.lua',
         'work-item-2.lua',

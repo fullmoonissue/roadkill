@@ -1,9 +1,10 @@
-local configuration = require('src/context')
+local context = require('src/context')
 local lu = require('luaunit')
 
+local messages
 function testIsValid()
-    local messages = {}
-    configuration.isValid(
+    messages = {}
+    context.isValid(
         {
             ['work-before-all'] = {
                 ['file'] = 42
@@ -40,6 +41,33 @@ function testIsValid()
         },
         messages
     )
+
+    messages = {}
+    context.isValid(
+        {
+            ['work-before-all'] = {
+                ['file'] = 'file'
+            },
+            ['work-start'] = {
+                ['duration'] = 1,
+            },
+            ['work-items'] = {
+                ['folder'] = 'folder',
+                ['random'] = true,
+                ['loop'] = 1,
+                ['nbElements'] = 1,
+            },
+            ['work-end'] = {
+                ['url'] = 'url'
+            },
+            ['work-after-all'] = {
+                ['start'] = 1
+            },
+        },
+        messages
+    )
+    table.sort(messages)
+    lu.assertEquals({}, messages)
 end
 
 os.exit(lu.LuaUnit.run())
