@@ -10,7 +10,7 @@ cs-check:
 	luacheck --std=min+roadkill entrypoint.lua src tests
 
 test:
-	lua tests/configuration.lua -v
+	lua tests/context.lua -v
 	lua tests/playlist.lua -v
 	lua tests/utils.lua -v
-	lua tests/vlc/options.lua -v
+	lua tests/vlc.lua -v

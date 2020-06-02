@@ -1,24 +1,36 @@
-local uiFormFileName = require('src/ui/form/1-FileName')
-local uiFormConfiguration = require('src/ui/form/2-Configuration')
-local uiFormItemFile = require('src/ui/form/3-ItemFile')
-local uiFormItemFolder = require('src/ui/form/3-ItemFolder')
-local uiFormItemUrl = require('src/ui/form/3-ItemUrl')
+-- --- --- --
+-- Require --
+-- --- --- --
+
+local context = require('src/context')
+local uiFormFileName = require('src/ui/form/name')
+local uiFormConfiguration = require('src/ui/form/configuration')
+local uiFormItemFile = require('src/ui/form/type/file')
+local uiFormItemFolder = require('src/ui/form/type/folder')
+local uiFormItemUrl = require('src/ui/form/type/url')
 local uiWip = require('src/ui/wip')
 
--- Window where forms will be shown
-local window
--- Methods
-local   deleteWindow,
-        getWindow,
-        prepareWindow,
-        showWindow,
-        windowFormConfiguration,
-        windowFormFileName,
-        windowFormItemType
+-- --- --- --
+-- Header  --
+-- --- --- --
 
---
+-- Fields
+local window -- Window where forms will be shown
+
 -- Methods
---
+local
+deleteWindow, -- delete an existing window
+getWindow, -- retrieve an existing window
+prepareWindow, -- setup a new window
+quit, -- Quit the extension
+showWindow, -- show the window
+windowFormConfiguration, -- prepare, add form ans show the window about configuration building
+windowFormFileName, -- prepare, add form ans show the window about configurations
+windowFormItemType -- prepare, add form ans show the window about a type of item
+
+-- --- --- --
+--  Code   --
+-- --- --- --
 
 deleteWindow = function()
     if window ~= nil then
@@ -36,27 +48,25 @@ prepareWindow = function(title)
     window:set_title(string.format('[Roadkill] %s', title))
 end
 
+quit = function()
+    deleteWindow()
+    vlc.deactivate()
+end
+
 showWindow = function()
     window:show()
 end
 
 windowFormConfiguration = function()
     prepareWindow('Items configuration')
-
-    uiFormConfiguration.appendNewForm()
-
+    uiFormConfiguration.displayForm()
     showWindow()
 end
 
 windowFormFileName = function()
-    uiFormFileName.fillSavedConfigurations()
-    prepareWindow('Load / Create configuration')
-
-    local row = 1
-    uiFormFileName.appendLoadForm(row)
-    row = row + 1
-    uiFormFileName.appendCreateForm(row)
-
+    context.fillSavedConfigurations()
+    prepareWindow('Manage configuration(s)')
+    uiFormFileName.displayForm()
     showWindow()
 end
 
@@ -64,41 +74,33 @@ windowFormItemType = function()
     prepareWindow('Item configuration')
 
     local yButtonAdd
-    if 1 == uiWip.wipType then
-        uiFormItemFolder.appendNewForm()
+    if 'Folder' == uiWip.itemType then
+        uiFormItemFolder.displayForm()
 
         yButtonAdd = 7
-    elseif 2 == uiWip.wipType then
-        uiFormItemFile.appendNewForm()
+    elseif 'File' == uiWip.itemType then
+        uiFormItemFile.displayForm()
 
         yButtonAdd = 4
-    elseif 3 == uiWip.wipType then
-        uiFormItemUrl.appendNewForm()
+    elseif 'Url' == uiWip.itemType then
+        uiFormItemUrl.displayForm()
 
         yButtonAdd = 2
     end
 
     window:add_button('Go back', windowFormConfiguration, 1, yButtonAdd)
-    window:add_button('Add', uiFormConfiguration.addMediumToConfiguration, 2, yButtonAdd)
+    window:add_button('Add', uiFormConfiguration.addItem, 2, yButtonAdd)
 
     showWindow()
 end
 
---
--- Exports
---
+-- --- --- --
+-- Exports --
+-- --- --- --
 
 return {
-    quit = function()
-        deleteWindow()
-        vlc.deactivate()
-    end,
-
     getWindow = getWindow,
-    prepareWindow = prepareWindow,
-    showWindow = showWindow,
-    deleteWindow = deleteWindow,
-
+    quit = quit,
     windowFormConfiguration = windowFormConfiguration,
     windowFormFileName = windowFormFileName,
     windowFormItemType = windowFormItemType,

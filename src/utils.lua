@@ -1,5 +1,20 @@
--- Little function to change a table{...} into table{table{...}} (to always use "for" to traverse what is returned)
-local toList = function(tbl)
+-- --- --- --
+-- Header  --
+-- --- --- --
+
+-- Fields
+local seed = 0 -- Incremental seed, to be sure that the randomization will always be different
+
+-- Methods
+local
+toList, -- Function to change a table{...} into table{table{...}} (to always use "for" to traverse what is returned)
+shuffle -- Shuffle a table, @see https://gist.github.com/Uradamus/10323382
+
+-- --- --- --
+--  Code   --
+-- --- --- --
+
+toList = function(tbl)
     if tbl[1] == nil then
         tbl = { tbl }
     end
@@ -7,12 +22,7 @@ local toList = function(tbl)
     return tbl
 end
 
--- Incremental seed, to be sure that the randomization will always be different (in addition to the os.time())
-local seed = 0
-
--- Shuffle a table
--- @see https://gist.github.com/Uradamus/10323382
-local function shuffle(tbl)
+shuffle = function(tbl)
     seed = seed + 1
     math.randomseed(os.time() + seed)
     for index = #tbl, 2, -1 do
@@ -22,6 +32,10 @@ local function shuffle(tbl)
 
     return tbl
 end
+
+-- --- --- --
+-- Exports --
+-- --- --- --
 
 return {
     toList = toList,

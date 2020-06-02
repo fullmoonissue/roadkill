@@ -3,7 +3,7 @@ local roadkill
 function descriptor()
     return {
         title = 'Roadkill',
-        version = '3.0.0',
+        version = '3.1.0',
         author = 'fullmoonissue',
         url = 'http://www.fullmoonissue.net/',
         shortdesc = 'Roadkill, VLC Extension';
@@ -16,7 +16,7 @@ function activate()
     local pwd = debug.getinfo(1).source:match('@?(.*/)') .. 'roadkill'
     package.path = package.path .. ';' .. pwd .. '/?.lua'
 
-    require('src/context').pwd = pwd
+    require('src/context').setPwd(pwd)
     roadkill = require('src/ui/roadkill')
     roadkill.windowFormFileName()
 end

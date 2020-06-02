@@ -1,17 +1,23 @@
 # Changelog
 
+* 3.1
+  * (Feature) Possibility to delete an existing configuration
+  * (Feature) Possibility to update an existing configuration
+  * (Clean) Add a feedback when a file is saved
+  * (Clean) Vlc files merged & ui/form files renamed
+  * (Documentation) Move some documentation into a `doc` folder
 * 3.0.1
-  * (Documentation) Changelog put in a file
-  * (Documentation) Roadmap put in a file
+  * (Documentation) New file : Changelog
+  * (Documentation) New file : Roadmap
 * 3.0.0
   * (Feature) UI
-    * Configuration can be made thanks to an ui
-    * Configuration can be saved & load
+    * Configuration are built thanks to an ui
+    * Configuration are saved into files
   * (BC Break) The commands to setup the extension have changed
-  * (Clean) Split code across multiple files
-  * (Clean) Split tests across multiple files
+  * (Clean) Split code across multiple files (require() problem fixed)
+  * (Clean) Split tests across multiple files (require() problem fixed)
 * 2.5.0
-  * (Feature) Customize file name displayed in vlc
+  * (Feature) Customize item's text displayed in vlc
 * 2.4.1
   * (Clean) Add validations on configuration
   * (Clean) Setup and add tests
