@@ -2,13 +2,6 @@
 
 ## Version 3.x
 
-### 3.2
-
-- (Feature) Add a new medium type : Script
-- (Feature) UI validation
-- (Feature) Position handling
-- (Test) Add the missing tests of certain methods in the ui folder
-
 ### 3.3
 
 - (Feature) I18N

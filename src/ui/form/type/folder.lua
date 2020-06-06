@@ -9,10 +9,12 @@ inputDuration, -- form input text about the time of end of the selected files in
 inputLoop, -- form input text about the number of repetitions for each selected files into the folder
 inputNbElements, -- form input text about the number of files to select into the folder
 inputPath, -- form input text about the path of the folder
-inputStart -- form input text about the time of start of the selected files into the folder
+inputStart, -- form input text about the time of start of the selected files into the folder
+labelFeedbackLocation
 
 -- Methods
 local
+add,
 displayForm, -- add the form about the creation of the folder item
 getDurationValue, -- retrieve the value of the duration
 getLoopValue, -- retrieve the value of the number of repetitions
@@ -25,11 +27,21 @@ getStartValue -- retrieve the value of the time of start
 --  Code   --
 -- --- --- --
 
+add = function()
+    if getPathValue() == '' then
+        labelFeedbackLocation:set_text('<span style="color:red;">Required</span>')
+    else
+        require('src/ui/form/items').addItem()
+    end
+end
+
 displayForm = function()
-    local window = require('src/ui/roadkill').getWindow()
+    local windowModule = require('src/ui/window')
+    local window = windowModule.get()
 
     window:add_label('Location of the folder ?', 1, 1)
     inputPath = window:add_text_input('', 2, 1)
+    labelFeedbackLocation = window:add_label('', 3, 1)
 
     window:add_label('Randomize file selection ?', 1, 2)
     checkboxRandom = window:add_check_box('Yes', false, 2, 2)
@@ -37,7 +49,7 @@ displayForm = function()
     window:add_label('Number of loop by element ?', 1, 3)
     inputLoop = window:add_text_input('', 2, 3)
 
-    window:add_label('Number of elements to select into the folder ?', 1, 4)
+    window:add_label('Number of elements ?', 1, 4)
     inputNbElements = window:add_text_input('', 2, 4)
 
     window:add_label('Duration ?', 1, 5)
@@ -45,6 +57,9 @@ displayForm = function()
 
     window:add_label('Start ?', 1, 6)
     inputStart = window:add_text_input('', 2, 6)
+
+    window:add_button('Go back', windowModule.formConfiguration, 1, 7)
+    window:add_button('Add', add, 3, 7)
 end
 
 getDurationValue = function()

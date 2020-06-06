@@ -1,5 +1,12 @@
 # Changelog
 
+* 3.2
+  * (Feature) Items position can be moved up / down
+  * (Feature) UI validation
+  * (UI) Dashboard updated
+  * (UI) Items listing split by root keys (and line format changed)
+  * (Clean) WIP fields moved
+  * (Clean) Roadkill file (in /ui) renamed
 * 3.1
   * (Feature) Possibility to delete an existing configuration
   * (Feature) Possibility to update an existing configuration

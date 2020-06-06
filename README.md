@@ -33,8 +33,8 @@ Roadkill is a VLC Extension to setup a playlist with work / break sequences.
 
 ## Documentation
 
-- [VLC Extension](./doc/vlc_extension.md)
 - [Configuration](./doc/configuration.md)
+- [VLC Extension](./doc/vlc_extension.md)
 
 ## License
 
