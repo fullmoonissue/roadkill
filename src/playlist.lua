@@ -3,12 +3,15 @@
 -- --- --- --
 
 local _vlc_ = require('src/vlc')
-local context = require('src/context')
+local i18nModule = require('src/ui/i18n')
 local utils = require('src/utils')
 
 -- --- --- --
 -- Header  --
 -- --- --- --
+
+-- Fields
+local i18n
 
 -- Methods
 local
@@ -81,6 +84,7 @@ addItems = function(name, items, playlistItems)
 end
 
 compile = function(config, playlistItems)
+    i18n = i18nModule.getTranslations()
     if playlistItems == nil then
         playlistItems = {}
     end
@@ -96,18 +100,18 @@ compile = function(config, playlistItems)
 
     -- Prepare all the items to be added to the playlist ...
     -- ... 1. items into the "work-before-all" root key ...
-    addItems(context.texts['work-before-all'], config['work-before-all'], playlistItems)
+    addItems(i18n.playlistTexts['work-before-all'], config['work-before-all'], playlistItems)
     -- ... Then for each "work-items" root key items ...
     for _, workItem in ipairs(config['work-items']) do
         -- ... 2. items into the "work-start" root key
-        addItems(context.texts['work-start'], config['work-start'], playlistItems)
+        addItems(i18n.playlistTexts['work-start'], config['work-start'], playlistItems)
         -- ... 3. the current work item
-        addItem(context.texts['work-items'], workItem, playlistItems)
+        addItem(i18n.playlistTexts['work-items'], workItem, playlistItems)
         -- ... 4. items into the "work-end" root key
-        addItems(context.texts['work-end'], config['work-end'], playlistItems)
+        addItems(i18n.playlistTexts['work-end'], config['work-end'], playlistItems)
     end
     -- ... 5. finally, items into the "work-after-all" root key ...
-    addItems(context.texts['work-after-all'], config['work-after-all'], playlistItems)
+    addItems(i18n.playlistTexts['work-after-all'], config['work-after-all'], playlistItems)
 end
 
 -- Transform item with a `folder` key into a list of items with a `file` key

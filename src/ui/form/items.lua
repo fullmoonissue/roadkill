@@ -3,6 +3,7 @@
 -- --- --- --
 
 local context = require('src/context')
+local i18nModule = require('src/ui/i18n')
 local uiFormItemFile = require('src/ui/form/type/file')
 local uiFormItemFolder = require('src/ui/form/type/folder')
 local uiFormItemUrl = require('src/ui/form/type/url')
@@ -22,6 +23,7 @@ buttonWorkItems,
 buttonWorkStart,
 dropdownRootKey, -- form dropdown about the root key
 dropdownItemType, -- form dropdown about the item type
+i18n,
 labelFeedbackSave, -- form label when a file is saved
 listItems, -- form list about the root keys and items
 listRootKeyCurrent
@@ -43,117 +45,79 @@ listWorkItems,
 listWorkStart,
 moveDownSelectedItems,
 moveUpSelectedItems,
-saveConfiguration -- write the entries into a configuration file
+retrieveItemProperties,
+saveConfiguration, -- write the entries into a configuration file
+updateItem,
+updateSelectedItem
 
 -- --- --- --
 --  Code   --
 -- --- --- --
 
 addItem = function()
-    local item = {}
-    if 'Folder' == context.wips.itemType then
-        item['folder'] = uiFormItemFolder.getPathValue()
-
-        if uiFormItemFolder.getRandomValue() then
-            item['random'] = true
-        end
-
-        local loop = uiFormItemFolder.getLoopValue()
-        if loop ~= nil then
-            item['loop'] = loop
-        end
-
-        local nbElements = uiFormItemFolder.getNbElementsValue()
-        if nbElements ~= nil then
-            item['nbElements'] = nbElements
-        end
-
-        local duration = uiFormItemFolder.getDurationValue()
-        if duration ~= nil then
-            item['duration'] = duration
-        end
-
-        local start = uiFormItemFolder.getStartValue()
-        if start ~= nil then
-            item['start'] = start
-        end
-    elseif 'File' == context.wips.itemType then
-        item['file'] = uiFormItemFile.getPathValue()
-
-        local duration = uiFormItemFile.getDurationValue()
-        if duration ~= nil then
-            item['duration'] = duration
-        end
-
-        local start = uiFormItemFile.getStartValue()
-        if start ~= nil then
-            item['start'] = start
-        end
-    elseif 'Url' == context.wips.itemType then
-        item['url'] = uiFormItemUrl.getPathValue()
-    end
-
-    table.insert(context.wips.configuration[context.wips.rootKey], item)
+    table.insert(context.wips.configuration[context.wips.rootKey], retrieveItemProperties())
 
     require('src/ui/window').formConfiguration()
 end
 
 displayForm = function()
+    i18n = i18nModule.getTranslations()
+
     local uiWindow = require('src/ui/window')
     local window = uiWindow.get()
 
     local row = 1
-    window:add_label('Add an item', 1, row)
+    window:add_label(i18n.items.form.label.addItem, 1, row)
 
     row = row + 1
     dropdownRootKey = window:add_dropdown(1, row)
-    dropdownRootKey:add_value(context.textRootKeys['work-before-all'], 1)
-    dropdownRootKey:add_value(context.textRootKeys['work-start'], 2)
-    dropdownRootKey:add_value(context.textRootKeys['work-items'], 3)
-    dropdownRootKey:add_value(context.textRootKeys['work-end'], 4)
-    dropdownRootKey:add_value(context.textRootKeys['work-after-all'], 5)
+    dropdownRootKey:add_value(i18n.textRootKeys['work-before-all'], 1)
+    dropdownRootKey:add_value(i18n.textRootKeys['work-start'], 2)
+    dropdownRootKey:add_value(i18n.textRootKeys['work-items'], 3)
+    dropdownRootKey:add_value(i18n.textRootKeys['work-end'], 4)
+    dropdownRootKey:add_value(i18n.textRootKeys['work-after-all'], 5)
 
     dropdownItemType = window:add_dropdown(2, row)
     for index, labelType in ipairs(context.itemTypes) do
-        dropdownItemType:add_value(labelType, index)
+        dropdownItemType:add_value(i18n.textItemTypes[labelType], index)
     end
 
-    window:add_button('Configure...', configureItemTypeValues, 3, row)
+    window:add_button(i18n.items.form.button.configureType, configureItemTypeValues, 3, row)
 
     row = row + 1
-    window:add_label('List items', 1, row, 2)
+    window:add_label(i18n.items.form.label.listItems, 1, row, 2)
     row = row + 1
     local col = 1
     buttonWorkBeforeAll = window:add_button(
-        getButtonListLabel(context.rootKeys[col], context.textRootKeys[context.rootKeys[col]]),
+        getButtonListLabel(context.rootKeys[col], i18n.textRootKeys[context.rootKeys[col]]),
         listWorkBeforeAll,
         col,
         row
     )
     col = col + 1
     buttonWorkStart = window:add_button(
-        getButtonListLabel(context.rootKeys[col], context.textRootKeys[context.rootKeys[col]]),
+        getButtonListLabel(context.rootKeys[col], i18n.textRootKeys[context.rootKeys[col]]),
         listWorkStart,
         col,
         row
     )
     col = col + 1
     buttonWorkItems = window:add_button(
-        getButtonListLabel(context.rootKeys[col], context.textRootKeys[context.rootKeys[col]]),
+        getButtonListLabel(context.rootKeys[col], i18n.textRootKeys[context.rootKeys[col]]),
         listWorkItems,
         col,
         row
     )
     col = col + 1
     buttonWorkEnd = window:add_button(
-        getButtonListLabel(context.rootKeys[col], context.textRootKeys[context.rootKeys[col]]),
+        getButtonListLabel(context.rootKeys[col], i18n.textRootKeys[context.rootKeys[col]]),
         listWorkEnd,
         col,
         row
     )
     col = col + 1
     buttonWorkAfterAll = window:add_button(
-        getButtonListLabel(context.rootKeys[col], context.textRootKeys[context.rootKeys[col]]),
+        getButtonListLabel(context.rootKeys[col], i18n.textRootKeys[context.rootKeys[col]]),
         listWorkAfterAll,
         col,
         row
@@ -162,13 +126,14 @@ displayForm = function()
     listItems = window:add_list(1, row, 5)
     row = row + 1
     window:add_button('⬆️', moveUpSelectedItems, 1, row)
-    window:add_button('🗑️', deleteSelectedItems, 2, row)
-    window:add_button('⬇️', moveDownSelectedItems, 3, row)
+    window:add_button('✏️', updateSelectedItem, 2, row)
+    window:add_button('🗑️', deleteSelectedItems, 3, row)
+    window:add_button('⬇️', moveDownSelectedItems, 4, row)
 
     row = row + 1
-    window:add_button('Back to dashboard', uiWindow.formFileName, 1, row)
+    window:add_button(i18n.items.form.button.backToDashboard, uiWindow.formFileName, 1, row)
     labelFeedbackSave = window:add_label('', 2, row, 3)
-    window:add_button('Save', saveConfiguration, 5, row)
+    window:add_button(i18n.items.form.button.save, saveConfiguration, 5, row)
 end
 
 configureItemTypeValues = function()
@@ -182,6 +147,7 @@ configureItemTypeValues = function()
 end
 
 deleteSelectedItems = function()
+    i18n = i18nModule.getTranslations()
     local selectedItems = listItems:get_selection()
     local index = 0
     local keptWipConfiguration = {}
@@ -200,7 +166,7 @@ deleteSelectedItems = function()
 
     listItems:clear()
     fillListItems(rootKey)
-    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, context.textRootKeys[rootKey]))
+    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
 end
 
 fillListItems = function(rootKey)
@@ -320,6 +286,7 @@ listWorkStart = function()
 end
 
 moveDownSelectedItems = function()
+    i18n = i18nModule.getTranslations()
     local selectedItems = listItems:get_selection()
     local rootKey = listRootKeyCurrent
     for index = #context.wips.configuration[rootKey], 1, -1 do
@@ -332,10 +299,11 @@ moveDownSelectedItems = function()
 
     listItems:clear()
     fillListItems(rootKey)
-    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, context.textRootKeys[rootKey]))
+    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
 end
 
 moveUpSelectedItems = function()
+    i18n = i18nModule.getTranslations()
     local selectedItems = listItems:get_selection()
     local rootKey = listRootKeyCurrent
     for index, _ in ipairs(context.wips.configuration[rootKey]) do
@@ -348,10 +316,58 @@ moveUpSelectedItems = function()
 
     listItems:clear()
     fillListItems(rootKey)
-    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, context.textRootKeys[rootKey]))
+    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
+end
+
+retrieveItemProperties = function()
+    local item = {}
+    if 'Folder' == context.wips.itemType then
+        item['folder'] = uiFormItemFolder.getPathValue()
+
+        if uiFormItemFolder.getRandomValue() then
+            item['random'] = true
+        end
+
+        local loop = uiFormItemFolder.getLoopValue()
+        if loop ~= nil then
+            item['loop'] = loop
+        end
+
+        local nbElements = uiFormItemFolder.getNbElementsValue()
+        if nbElements ~= nil then
+            item['nbElements'] = nbElements
+        end
+
+        local duration = uiFormItemFolder.getDurationValue()
+        if duration ~= nil then
+            item['duration'] = duration
+        end
+
+        local start = uiFormItemFolder.getStartValue()
+        if start ~= nil then
+            item['start'] = start
+        end
+    elseif 'File' == context.wips.itemType then
+        item['file'] = uiFormItemFile.getPathValue()
+
+        local duration = uiFormItemFile.getDurationValue()
+        if duration ~= nil then
+            item['duration'] = duration
+        end
+
+        local start = uiFormItemFile.getStartValue()
+        if start ~= nil then
+            item['start'] = start
+        end
+    elseif 'Url' == context.wips.itemType then
+        item['url'] = uiFormItemUrl.getPathValue()
+    end
+
+    return item
 end
 
 saveConfiguration = function()
+    i18n = i18nModule.getTranslations()
     local lines = { 'return {' }
     for _, rootKey in ipairs(context.rootKeys) do
         if context.wips.configuration[rootKey] ~= nil then
@@ -383,7 +399,71 @@ saveConfiguration = function()
         table.concat(lines, "\n")
     )
 
-    labelFeedbackSave:set_text('<span style="color:green;">File saved</span>')
+    labelFeedbackSave:set_text(
+        string.format(
+            '<span style="color:green;">%s</span>',
+            i18n.items.form.success.fileSaved
+        )
+    )
+end
+
+updateItem = function()
+    context.wips.configuration[context.wips.rootKey][context.wips.position] = retrieveItemProperties()
+    context.wips.formFile = {
+        path = '',
+        duration = '',
+        start = '',
+    }
+
+    require('src/ui/window').formConfiguration()
+end
+
+updateSelectedItem = function()
+    -- 1. Get the first selected element (in case of multiple are selected <= can't update multiple elements)
+    local selectedItem
+    local selectedItems = listItems:get_selection()
+    local rootKey = listRootKeyCurrent
+    if context.wips.configuration[rootKey] ~= nil then
+        for index, item in ipairs(context.wips.configuration[rootKey]) do
+            if nil == selectedItem and selectedItems[index] ~= nil then
+                selectedItem = item
+                context.wips.position = index
+            end
+        end
+    end
+
+    if selectedItem ~= nil then
+        -- 2. Apply wips values
+        local itemType
+        if selectedItem.folder ~= nil then
+            itemType = 'Folder'
+            context.wips.formFolder = {
+                path = selectedItem.folder,
+                random = selectedItem.random,
+                loop = selectedItem.loop,
+                nbElements = selectedItem.nbElements,
+                duration = selectedItem.duration,
+                start = selectedItem.start,
+            }
+        elseif selectedItem.file ~= nil then
+            itemType = 'File'
+            context.wips.formFile = {
+                path = selectedItem.file,
+                duration = selectedItem.duration,
+                start = selectedItem.start,
+            }
+        elseif selectedItem.url ~= nil then
+            itemType = 'Url'
+            context.wips.formUrl = {
+                path = selectedItem.url,
+            }
+        end
+
+        -- 3. Open the associated window
+        context.wips.rootKey = rootKey
+        context.wips.itemType = itemType
+        require('src/ui/window').formItemType()
+    end
 end
 
 -- --- --- --
@@ -393,4 +473,5 @@ end
 return {
     addItem = addItem,
     displayForm = displayForm,
+    updateItem = updateItem,
 }

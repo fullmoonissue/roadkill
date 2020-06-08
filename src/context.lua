@@ -35,24 +35,27 @@ local rootKeys = { -- Root keys to put into the configuration table
 }
 local savedConfigurations = {}
 local savesFolder = 'saves'
-local textRootKeys = {
-    ['work-before-all'] = 'Before all exercices',
-    ['work-start'] = 'Before any exercice',
-    ['work-items'] = 'Exercices',
-    ['work-end'] = 'After any exercice',
-    ['work-after-all'] = 'After all exercices',
-}
-local texts = { -- Texts which are displayed in the playlist
-    ['work-before-all'] = 'Before Starting !',
-    ['work-start'] = 'Let\'s Go !',
-    ['work-items'] = 'Work !',
-    ['work-end'] = 'Take a break !',
-    ['work-after-all'] = 'Finish !',
-}
 local wips = { -- These wip variables are the memory of the set values across windows
     configuration = {},
     fileName = nil,
+    formFile = {
+        path = '',
+        duration = '',
+        start = '',
+    },
+    formFolder = {
+        path = '',
+        random = '',
+        loop = '',
+        nbElements = '',
+        duration = '',
+        start = '',
+    },
+    formUrl = {
+        path = '',
+    },
     itemType = nil,
+    position = nil,
     rootKey = nil,
 }
 
@@ -128,7 +131,5 @@ return {
     rootKeys = rootKeys,
     savesFolder = savesFolder,
     setPwd = setPwd,
-    textRootKeys = textRootKeys,
-    texts = texts,
     wips = wips,
 }

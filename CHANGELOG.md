@@ -1,5 +1,8 @@
 # Changelog
 
+* 3.3
+  * (Feature) Allow to update a line in the listing of items
+  * (Feature) Internationalization
 * 3.2
   * (Feature) Items position can be moved up / down
   * (Feature) UI validation
