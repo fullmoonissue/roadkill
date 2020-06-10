@@ -73,7 +73,7 @@ setPwd
 
 fillSavedConfigurations = function()
     savedConfigurations = {}
-    for _, savedConfiguration in ipairs(_vlc_.readdir(pwd .. '/' .. savesFolder)) do
+    for _, savedConfiguration in ipairs(_vlc_.readdir(string.format('%s/%s', pwd, savesFolder))) do
         if savedConfiguration ~= '.' and savedConfiguration ~= '..' and savedConfiguration ~= '.gitkeep' then
             table.insert(savedConfigurations, string.sub(savedConfiguration, 0, -5))
         end

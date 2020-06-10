@@ -1,8 +1,12 @@
 # Changelog
 
+* 3.3.1
+  * (UI) Save not allowed if no items set
+  * (UI) Block the creation of a configuration file which already exists
+  * (Clean) Replace all `..` by `string.format()`
 * 3.3
   * (Feature) Allow to update a line in the listing of items
-  * (Feature) Internationalization
+  * (Feature) Internationalization (en & fr)
 * 3.2
   * (Feature) Items position can be moved up / down
   * (Feature) UI validation
