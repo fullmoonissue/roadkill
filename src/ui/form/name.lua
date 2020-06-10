@@ -36,7 +36,7 @@ updateConfiguration -- update an existing configuration
 -- --- --- --
 
 deleteConfiguration = function()
-    utils.deleteFile(context.getPwd() .. '/' .. context.savesFolder .. '/' .. getConfigurationValue() .. '.lua')
+    utils.deleteFile(string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, getConfigurationValue()))
     require('src/ui/window').formFileName()
 end
 
@@ -95,7 +95,7 @@ getFileNameValue = function()
 end
 
 launchConfiguration = function()
-    local savedConfiguration = require(context.savesFolder .. '/' .. getConfigurationValue())
+    local savedConfiguration = require(string.format('%s/%s', context.savesFolder, getConfigurationValue()))
     if context.isValid(savedConfiguration) then
         local playlistItems = {}
         playlist.compile(savedConfiguration, playlistItems)
@@ -114,17 +114,31 @@ saveFileName = function()
             )
         )
     else
-        context.wips.configuration = {}
-        context.wips.fileName = fileNameValue
+        local isConfigurationAlreadyExisting = false
+        local folderPath = string.format('%s/%s', context.getPwd(), context.savesFolder)
+        for _, savedConfiguration in ipairs(_vlc_.readdir(folderPath)) do
+            if savedConfiguration == string.format('%s.lua', fileNameValue) then
+                isConfigurationAlreadyExisting = true
+            end
+        end
+        if isConfigurationAlreadyExisting then
+            labelFeedbackCreate:set_text(
+                string.format(
+                    '<span style="color:red;">%s</span>',
+                    i18n.name.form.error.alreadyExists
+                )
+            )
+        else
+            context.wips.configuration = {}
+            context.wips.fileName = fileNameValue
 
-        require('src/ui/window').formConfiguration()
+            require('src/ui/window').formConfiguration()
+        end
     end
 end
 
 updateConfiguration = function()
-    context.wips.configuration = require(
-        context.savesFolder .. '/' .. getConfigurationValue()
-    )
+    context.wips.configuration = require(string.format('%s/%s', context.savesFolder, getConfigurationValue()))
     context.wips.fileName = getConfigurationValue()
 
     require('src/ui/window').formConfiguration()

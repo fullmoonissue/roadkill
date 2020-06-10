@@ -368,6 +368,8 @@ end
 
 saveConfiguration = function()
     i18n = i18nModule.getTranslations()
+
+    local nbItemsInserted = 0
     local lines = { 'return {' }
     for _, rootKey in ipairs(context.rootKeys) do
         if context.wips.configuration[rootKey] ~= nil then
@@ -376,6 +378,7 @@ saveConfiguration = function()
                 table.insert(lines, string.format('%s{', string.rep(' ', 8)))
                 for key, _ in pairs(context.keyTypes) do
                     if item[key] ~= nil then
+                        nbItemsInserted = nbItemsInserted + 1
                         table.insert(
                             lines,
                             string.format(
@@ -394,17 +397,26 @@ saveConfiguration = function()
     end
     table.insert(lines, '}')
 
-    utils.createFile(
-        context.getPwd() .. '/' .. context.savesFolder .. '/' .. context.wips.fileName .. '.lua',
-        table.concat(lines, "\n")
-    )
-
-    labelFeedbackSave:set_text(
-        string.format(
-            '<span style="color:green;">%s</span>',
-            i18n.items.form.success.fileSaved
+    if 0 == nbItemsInserted then
+        labelFeedbackSave:set_text(
+            string.format(
+                '<span style="color:red;">%s</span>',
+                i18n.items.form.error.noItemsNoSave
+            )
         )
-    )
+    else
+        utils.createFile(
+            string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, context.wips.fileName),
+            table.concat(lines, "\n")
+        )
+
+        labelFeedbackSave:set_text(
+            string.format(
+                '<span style="color:green;">%s</span>',
+                i18n.items.form.success.fileSaved
+            )
+        )
+    end
 end
 
 updateItem = function()

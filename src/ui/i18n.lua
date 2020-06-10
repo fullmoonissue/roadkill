@@ -42,6 +42,7 @@ local allTranslations = {
                     update = 'Update',
                 },
                 error = {
+                    alreadyExists = 'This name already exists',
                     nameRequired = 'Name required',
                 },
                 label = {
@@ -57,6 +58,9 @@ local allTranslations = {
                     backToDashboard = 'Back to dashboard',
                     configureType = 'Configure...',
                     save = 'Save',
+                },
+                error = {
+                    noItemsNoSave = 'No items to save',
                 },
                 success = {
                     fileSaved = 'File saved',
@@ -160,6 +164,7 @@ local allTranslations = {
                     update = 'Mettre à jour',
                 },
                 error = {
+                    alreadyExists = 'Ce nom existe déjà',
                     nameRequired = 'Nom requis',
                 },
                 label = {
@@ -175,6 +180,9 @@ local allTranslations = {
                     backToDashboard = 'Retour au tableau de bord',
                     configureType = 'Configurer...',
                     save = 'Sauvegarder',
+                },
+                error = {
+                    noItemsNoSave = 'Aucun élément à sauvegarder',
                 },
                 success = {
                     fileSaved = 'Fichier sauvegardé',

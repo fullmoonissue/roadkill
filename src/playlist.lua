@@ -44,7 +44,7 @@ addItem = function(name, properties, playlistItems)
             if properties['url'] ~= nil then
                 path = properties['url']
             elseif properties['file'] ~= nil then
-                path = 'file://' .. properties['file']
+                path = string.format('file://%s', properties['file'])
             end
 
             if path ~= nil then
@@ -124,7 +124,7 @@ compileItem = function(workItem, workItems)
         local workFiles = {}
         for _, workFile in ipairs(_vlc_.readdir(workItem['folder'])) do
             if workFile ~= '.' and workFile ~= '..' then
-                table.insert(workFiles, workItem['folder'] .. '/' .. workFile)
+                table.insert(workFiles, string.format('%s/%s', workItem['folder'], workFile))
             end
         end
 
