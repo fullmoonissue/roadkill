@@ -2,8 +2,7 @@ local lu = require('luaunit')
 local playlist = require('src/playlist')
 
 -- Replace the texts in tests
-local configuration = require('src/context')
-configuration.texts = {
+require('src/ui/i18n').getTranslations().playlistTexts = {
     ['work-before-all'] = 'text-work-before-all',
     ['work-start'] = 'text-work-start',
     ['work-items'] = 'text-work-items',
