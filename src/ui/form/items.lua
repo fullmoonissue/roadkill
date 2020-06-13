@@ -16,6 +16,7 @@ local utils = require('src/utils')
 -- Fields
 local
 buttonRootKeyClicked,
+buttonsRootKey,
 buttonWorkAfterAll,
 buttonWorkBeforeAll,
 buttonWorkEnd,
@@ -25,15 +26,20 @@ dropdownRootKey, -- form dropdown about the root key
 dropdownItemType, -- form dropdown about the item type
 i18n,
 labelFeedbackSave, -- form label when a file is saved
+dropdownComplexActionsOnSelectedItem,
+dropdownComplexActionsOnPosition,
+dropdownComplexActionsOnTarget,
+dropdownSimpleActionsOnSelectedItem,
 listItems, -- form list about the root keys and items
 listRootKeyCurrent
 
 -- Methods
 local
 addItem, -- add a configured item to the configuration
+applyComplexActionOnSelectedItem,
+applySimpleActionOnSelectedItem,
 configureItemTypeValues, -- set wip values and call the window item configuration
 displayForm, -- add the form about the creation of a configuration
-deleteSelectedItems, -- remove selected item(s) of the configuration
 fillListItems, -- fill the list
 getButtonListLabel,
 getRootKeyValue, -- retrieve the value of the root key
@@ -43,12 +49,9 @@ listWorkBeforeAll,
 listWorkEnd,
 listWorkItems,
 listWorkStart,
-moveDownSelectedItems,
-moveUpSelectedItems,
 retrieveItemProperties,
 saveConfiguration, -- write the entries into a configuration file
-updateItem,
-updateSelectedItem
+updateItem
 
 -- --- --- --
 --  Code   --
@@ -60,6 +63,176 @@ addItem = function()
     require('src/ui/window').formConfiguration()
 end
 
+applyComplexActionOnSelectedItem = function()
+    i18n = i18nModule.getTranslations()
+
+    local selectedItem
+    local selectedItems = listItems:get_selection()
+    local rootKey = listRootKeyCurrent
+    if context.wips.configuration[rootKey] ~= nil then
+        for index, item in ipairs(context.wips.configuration[rootKey]) do
+            if nil == selectedItem and selectedItems[index] ~= nil then
+                selectedItem = item
+                context.wips.position = index
+            end
+        end
+    end
+
+    if selectedItem ~= nil then
+        -- Shift or Duplicate
+        if -1 ~= dropdownComplexActionsOnSelectedItem:get_value() then
+            local targetPosition = dropdownComplexActionsOnTarget:get_value()
+            local position = dropdownComplexActionsOnPosition:get_value()
+            if targetPosition >= 1 and position >= 1 then
+                local keptConfiguration = {}
+                local selectedItemInserted = false
+
+                if context.wips.configuration[context.rootKeys[targetPosition]] ~= nil then
+                    for index, item in pairs(context.wips.configuration[context.rootKeys[targetPosition]]) do
+                        if index == position then
+                            selectedItemInserted = true
+                            table.insert(keptConfiguration, selectedItem)
+                        end
+                        table.insert(keptConfiguration, item)
+                    end
+                    -- If the choose position is higher than the length of the rootKey count of elements
+                    if not selectedItemInserted then
+                        table.insert(keptConfiguration, selectedItem)
+                    end
+                else
+                    table.insert(keptConfiguration, selectedItem)
+                end
+
+                context.wips.configuration[context.rootKeys[targetPosition]] = keptConfiguration
+
+                local associatedButton = buttonsRootKey[targetPosition]
+                associatedButton:set_text(
+                    getButtonListLabel(
+                        context.rootKeys[targetPosition],
+                        i18n.textRootKeys[context.rootKeys[targetPosition]]
+                    )
+                )
+
+                -- Shift
+                if 1 == dropdownComplexActionsOnSelectedItem:get_value() then
+                    keptConfiguration = {}
+
+                    for index, item in pairs(context.wips.configuration[rootKey]) do
+                        if index ~= context.wips.position then
+                            table.insert(keptConfiguration, item)
+                        end
+                    end
+
+                    context.wips.configuration[rootKey] = keptConfiguration
+
+                    buttonRootKeyClicked:set_text(
+                        getButtonListLabel(
+                            rootKey,
+                            i18n.textRootKeys[rootKey]
+                        )
+                    )
+                end
+
+                listItems:clear()
+                fillListItems(rootKey)
+            end
+        end
+    end
+end
+
+applySimpleActionOnSelectedItem = function()
+    i18n = i18nModule.getTranslations()
+
+    local selectedItem
+    local selectedItems = listItems:get_selection()
+    local rootKey = listRootKeyCurrent
+    if context.wips.configuration[rootKey] ~= nil then
+        for index, item in ipairs(context.wips.configuration[rootKey]) do
+            if nil == selectedItem and selectedItems[index] ~= nil then
+                selectedItem = item
+                context.wips.position = index
+            end
+        end
+    end
+
+    if selectedItem ~= nil then
+        -- Move Up
+        if 1 == dropdownSimpleActionsOnSelectedItem:get_value() then
+            for index, _ in ipairs(context.wips.configuration[rootKey]) do
+                if index > 1 and selectedItems[index] ~= nil then
+                    local permutation = context.wips.configuration[rootKey][(index - 1)]
+                    context.wips.configuration[rootKey][(index - 1)] = context.wips.configuration[rootKey][index]
+                    context.wips.configuration[rootKey][index] = permutation
+                end
+            end
+
+            listItems:clear()
+            fillListItems(rootKey)
+        -- Move Down
+        elseif 2 == dropdownSimpleActionsOnSelectedItem:get_value() then
+            for index = #context.wips.configuration[rootKey], 1, -1 do
+                if index < #context.wips.configuration[rootKey] and selectedItems[index] ~= nil then
+                    local permutation = context.wips.configuration[rootKey][(index + 1)]
+                    context.wips.configuration[rootKey][(index + 1)] = context.wips.configuration[rootKey][index]
+                    context.wips.configuration[rootKey][index] = permutation
+                end
+            end
+
+            listItems:clear()
+            fillListItems(rootKey)
+        -- Update
+        elseif 3 == dropdownSimpleActionsOnSelectedItem:get_value() then
+            local itemType
+            if selectedItem.folder ~= nil then
+                itemType = 'Folder'
+                context.wips.formFolder = {
+                    path = selectedItem.folder,
+                    random = selectedItem.random,
+                    loop = selectedItem.loop,
+                    nbElements = selectedItem.nbElements,
+                    duration = selectedItem.duration,
+                    start = selectedItem.start,
+                }
+            elseif selectedItem.file ~= nil then
+                itemType = 'File'
+                context.wips.formFile = {
+                    path = selectedItem.file,
+                    duration = selectedItem.duration,
+                    start = selectedItem.start,
+                }
+            elseif selectedItem.url ~= nil then
+                itemType = 'Url'
+                context.wips.formUrl = {
+                    path = selectedItem.url,
+                }
+            end
+
+            context.wips.rootKey = rootKey
+            context.wips.itemType = itemType
+
+            require('src/ui/window').formItemType()
+        -- Delete
+        elseif 4 == dropdownSimpleActionsOnSelectedItem:get_value() then
+            if context.wips.configuration[rootKey] ~= nil then
+                local index = 0
+                local keptWipConfiguration = {}
+                for _, item in ipairs(context.wips.configuration[rootKey]) do
+                    index = index + 1
+                    if selectedItems[index] == nil then
+                        table.insert(keptWipConfiguration, item)
+                    end
+                end
+
+                context.wips.configuration[rootKey] = keptWipConfiguration
+
+                listItems:clear()
+                fillListItems(rootKey)
+                buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
+            end
+        end
+    end
+end
+
 displayForm = function()
     i18n = i18nModule.getTranslations()
 
@@ -67,7 +240,7 @@ displayForm = function()
     local window = uiWindow.get()
 
     local row = 1
-    window:add_label(i18n.items.form.label.addItem, 1, row)
+    window:add_label(string.format('<b>%s</b>', i18n.items.form.label.addItem), 1, row)
 
     row = row + 1
     dropdownRootKey = window:add_dropdown(1, row)
@@ -85,7 +258,7 @@ displayForm = function()
     window:add_button(i18n.items.form.button.configureType, configureItemTypeValues, 3, row)
 
     row = row + 1
-    window:add_label(i18n.items.form.label.listItems, 1, row, 2)
+    window:add_label(string.format('<b>%s</b>', i18n.items.form.label.listItems), 1, row, 2)
     row = row + 1
     local col = 1
     buttonWorkBeforeAll = window:add_button(
@@ -122,13 +295,60 @@ displayForm = function()
         col,
         row
     )
+    buttonsRootKey = {
+        buttonWorkBeforeAll,
+        buttonWorkStart,
+        buttonWorkItems,
+        buttonWorkEnd,
+        buttonWorkAfterAll,
+    }
     row = row + 1
+
     listItems = window:add_list(1, row, 5)
+
     row = row + 1
-    window:add_button('⬆️', moveUpSelectedItems, 1, row)
-    window:add_button('✏️', updateSelectedItem, 2, row)
-    window:add_button('🗑️', deleteSelectedItems, 3, row)
-    window:add_button('⬇️', moveDownSelectedItems, 4, row)
+
+    window:add_label(string.format('<b>%s</b>', 'Actions'), 1, row)
+
+    row = row + 1
+
+    dropdownSimpleActionsOnSelectedItem = window:add_dropdown(1, row)
+    dropdownSimpleActionsOnSelectedItem:add_value('On selected item...', -1)
+    dropdownSimpleActionsOnSelectedItem:add_value('⬆ Move Up', 1)
+    dropdownSimpleActionsOnSelectedItem:add_value('⬇ Move Down', 2)
+    dropdownSimpleActionsOnSelectedItem:add_value('✏ Update', 3)
+    dropdownSimpleActionsOnSelectedItem:add_value('🗑️ Delete', 4)
+
+    window:add_button('Apply️', applySimpleActionOnSelectedItem, 2, row)
+
+    row = row + 1
+
+    dropdownComplexActionsOnSelectedItem = window:add_dropdown(1, row)
+    dropdownComplexActionsOnSelectedItem:add_value('On selected item...', -1)
+    dropdownComplexActionsOnSelectedItem:add_value('📦 Shift', 1)
+    dropdownComplexActionsOnSelectedItem:add_value('➿ Duplicate', 2)
+
+    dropdownComplexActionsOnTarget = window:add_dropdown(2, row)
+    dropdownComplexActionsOnTarget:add_value('To...', 1)
+    dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-before-all'], 1)
+    dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-start'], 2)
+    dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-items'], 3)
+    dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-end'], 4)
+    dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-after-all'], 5)
+
+    dropdownComplexActionsOnPosition = window:add_dropdown(3, row)
+    dropdownComplexActionsOnPosition:add_value('Position...', -1)
+    local maxItems = 0
+    for _, items in pairs(context.wips.configuration) do
+        if #items > maxItems then
+            maxItems = #items
+        end
+    end
+    for position = 1, maxItems do
+        dropdownComplexActionsOnPosition:add_value(position, position)
+    end
+
+    window:add_button('Apply️', applyComplexActionOnSelectedItem, 4, row)
 
     row = row + 1
     window:add_button(i18n.items.form.button.backToDashboard, uiWindow.formFileName, 1, row)
@@ -144,29 +364,6 @@ configureItemTypeValues = function()
     context.wips.itemType = getItemTypeValue()
 
     require('src/ui/window').formItemType()
-end
-
-deleteSelectedItems = function()
-    i18n = i18nModule.getTranslations()
-    local selectedItems = listItems:get_selection()
-    local index = 0
-    local keptWipConfiguration = {}
-    local rootKey = listRootKeyCurrent
-    if context.wips.configuration[rootKey] ~= nil then
-        keptWipConfiguration = {}
-        for _, item in ipairs(context.wips.configuration[rootKey]) do
-            index = index + 1
-            if selectedItems[index] == nil then
-                table.insert(keptWipConfiguration, item)
-            end
-        end
-    end
-
-    context.wips.configuration[rootKey] = keptWipConfiguration
-
-    listItems:clear()
-    fillListItems(rootKey)
-    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
 end
 
 fillListItems = function(rootKey)
@@ -285,40 +482,6 @@ listWorkStart = function()
     fillListItems(currentRootKey)
 end
 
-moveDownSelectedItems = function()
-    i18n = i18nModule.getTranslations()
-    local selectedItems = listItems:get_selection()
-    local rootKey = listRootKeyCurrent
-    for index = #context.wips.configuration[rootKey], 1, -1 do
-        if index < #context.wips.configuration[rootKey] and selectedItems[index] ~= nil then
-            local permutation = context.wips.configuration[rootKey][(index + 1)]
-            context.wips.configuration[rootKey][(index + 1)] = context.wips.configuration[rootKey][index]
-            context.wips.configuration[rootKey][index] = permutation
-        end
-    end
-
-    listItems:clear()
-    fillListItems(rootKey)
-    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
-end
-
-moveUpSelectedItems = function()
-    i18n = i18nModule.getTranslations()
-    local selectedItems = listItems:get_selection()
-    local rootKey = listRootKeyCurrent
-    for index, _ in ipairs(context.wips.configuration[rootKey]) do
-        if index > 1 and selectedItems[index] ~= nil then
-            local permutation = context.wips.configuration[rootKey][(index - 1)]
-            context.wips.configuration[rootKey][(index - 1)] = context.wips.configuration[rootKey][index]
-            context.wips.configuration[rootKey][index] = permutation
-        end
-    end
-
-    listItems:clear()
-    fillListItems(rootKey)
-    buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
-end
-
 retrieveItemProperties = function()
     local item = {}
     if 'Folder' == context.wips.itemType then
@@ -428,54 +591,6 @@ updateItem = function()
     }
 
     require('src/ui/window').formConfiguration()
-end
-
-updateSelectedItem = function()
-    -- 1. Get the first selected element (in case of multiple are selected <= can't update multiple elements)
-    local selectedItem
-    local selectedItems = listItems:get_selection()
-    local rootKey = listRootKeyCurrent
-    if context.wips.configuration[rootKey] ~= nil then
-        for index, item in ipairs(context.wips.configuration[rootKey]) do
-            if nil == selectedItem and selectedItems[index] ~= nil then
-                selectedItem = item
-                context.wips.position = index
-            end
-        end
-    end
-
-    if selectedItem ~= nil then
-        -- 2. Apply wips values
-        local itemType
-        if selectedItem.folder ~= nil then
-            itemType = 'Folder'
-            context.wips.formFolder = {
-                path = selectedItem.folder,
-                random = selectedItem.random,
-                loop = selectedItem.loop,
-                nbElements = selectedItem.nbElements,
-                duration = selectedItem.duration,
-                start = selectedItem.start,
-            }
-        elseif selectedItem.file ~= nil then
-            itemType = 'File'
-            context.wips.formFile = {
-                path = selectedItem.file,
-                duration = selectedItem.duration,
-                start = selectedItem.start,
-            }
-        elseif selectedItem.url ~= nil then
-            itemType = 'Url'
-            context.wips.formUrl = {
-                path = selectedItem.url,
-            }
-        end
-
-        -- 3. Open the associated window
-        context.wips.rootKey = rootKey
-        context.wips.itemType = itemType
-        require('src/ui/window').formItemType()
-    end
 end
 
 -- --- --- --

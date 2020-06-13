@@ -14,10 +14,10 @@ local utils = require('src/utils')
 
 -- Fields
 local
+dropdownConfigurations, -- form list about the configurations
 i18n,
 inputFileName, -- form input text about the file name
-labelFeedbackCreate,
-listConfigurations -- form list about the configurations
+labelFeedbackCreate
 
 -- Methods
 local
@@ -55,9 +55,9 @@ displayForm = function()
     if 0 < #context.getSavedConfigurations() then
         window:add_label(string.format('<b>%s</b>', i18n.name.form.label.existingConfigurations), 1, row, 4)
         row = row + 1
-        listConfigurations = window:add_dropdown(1, row)
+        dropdownConfigurations = window:add_dropdown(1, row)
         for index, savedConfiguration in ipairs(context.getSavedConfigurations()) do
-            listConfigurations:add_value(savedConfiguration, index)
+            dropdownConfigurations:add_value(savedConfiguration, index)
         end
         window:add_button(i18n.name.form.button.launch, launchConfiguration, 2, row)
         window:add_button(i18n.name.form.button.update, updateConfiguration, 3, row)
@@ -87,7 +87,7 @@ fr = function()
 end
 
 getConfigurationValue = function()
-    return context.getSavedConfigurations()[listConfigurations:get_value()]
+    return context.getSavedConfigurations()[dropdownConfigurations:get_value()]
 end
 
 getFileNameValue = function()
