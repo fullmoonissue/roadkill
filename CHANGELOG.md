@@ -1,5 +1,9 @@
 # Changelog
 
+* 3.4.0
+  * (Feature) Move elsewhere an item
+  * (Feature) Duplicate an item
+  * (UI) Merge buttons actions into two lists
 * 3.3.1
   * (UI) Save not allowed if no items set
   * (UI) Block the creation of a configuration file which already exists
