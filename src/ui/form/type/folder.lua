@@ -13,23 +13,23 @@ local i18nModule = require('src/ui/i18n')
 local
 checkboxRandom, -- form checkbox about the randomization or not of the selected files into the folder
 i18n,
-inputDuration, -- form input text about the time of end of the selected files into the folder
+inputStopAt, -- form input text about the time of end of the selected files into the folder
 inputLoop, -- form input text about the number of repetitions for each selected files into the folder
 inputNbElements, -- form input text about the number of files to select into the folder
 inputPath, -- form input text about the path of the folder
-inputStart, -- form input text about the time of start of the selected files into the folder
+inputStartAt, -- form input text about the time of start of the selected files into the folder
 labelFeedbackLocation
 
 -- Methods
 local
 add,
 displayForm, -- add the form about the creation of the folder item
-getDurationValue, -- retrieve the value of the duration
+getStopAtValue, -- retrieve the value of the stopAt
 getLoopValue, -- retrieve the value of the number of repetitions
 getNbElementsValue, -- retrieve the value of number of files to select
 getPathValue, -- retrieve the value of the path
 getRandomValue, -- retrieve the value of the randomization
-getStartValue, -- retrieve the value of the time of start
+getStartAtValue, -- retrieve the value of the time of start
 isFormValid,
 update
 
@@ -69,7 +69,12 @@ displayForm = function()
     labelFeedbackLocation = window:add_label('', 3, 1)
 
     window:add_label(i18n.folder.form.label.random, 1, 2)
-    checkboxRandom = window:add_check_box(i18n.folder.form.checkbox.yes, true == context.wips.formFolder['random'], 2, 2)
+    checkboxRandom = window:add_check_box(
+        i18n.folder.form.checkbox.yes,
+        true == context.wips.formFolder['random'],
+        2,
+        2
+    )
 
     window:add_label(i18n.folder.form.label.loop, 1, 3)
     inputLoop = window:add_text_input(context.wips.formFolder['loop'], 2, 3)
@@ -77,13 +82,13 @@ displayForm = function()
     window:add_label(i18n.folder.form.label.nbElements, 1, 4)
     inputNbElements = window:add_text_input(context.wips.formFolder['nbElements'], 2, 4)
 
-    window:add_label(i18n.folder.form.label.duration, 1, 5)
-    inputDuration = window:add_text_input(context.wips.formFolder['duration'], 2, 5)
+    window:add_label(i18n.folder.form.label.startAt, 1, 5)
+    inputStartAt = window:add_text_input(context.wips.formFolder['startAt'], 2, 5)
 
-    window:add_label(i18n.folder.form.label.start, 1, 6)
-    inputStart = window:add_text_input(context.wips.formFolder['start'], 2, 6)
+    window:add_label(i18n.folder.form.label.stopAt, 1, 6)
+    inputStopAt = window:add_text_input(context.wips.formFolder['stopAt'], 2, 6)
 
-    window:add_button(i18n.folder.form.button.goBack, windowModule.formConfiguration, 1, 7)
+    window:add_button(i18n.folder.form.button.goBack, windowModule.formComposition, 1, 7)
     window:add_button(
         context.wips.formFolder['path'] == '' and i18n.folder.form.button.add or i18n.folder.form.button.update,
         context.wips.formFolder['path'] == '' and add or update,
@@ -92,8 +97,8 @@ displayForm = function()
     )
 end
 
-getDurationValue = function()
-    return tonumber(inputDuration:get_text())
+getStopAtValue = function()
+    return tonumber(inputStopAt:get_text())
 end
 
 getLoopValue = function()
@@ -112,8 +117,8 @@ getRandomValue = function()
     return checkboxRandom:get_checked()
 end
 
-getStartValue = function()
-    return tonumber(inputStart:get_text())
+getStartAtValue = function()
+    return tonumber(inputStartAt:get_text())
 end
 
 update = function()
@@ -128,10 +133,10 @@ end
 
 return {
     displayForm = displayForm,
-    getDurationValue = getDurationValue,
+    getStopAtValue = getStopAtValue,
     getLoopValue = getLoopValue,
     getNbElementsValue = getNbElementsValue,
     getPathValue = getPathValue,
     getRandomValue = getRandomValue,
-    getStartValue = getStartValue,
+    getStartAtValue = getStartAtValue,
 }

@@ -25,7 +25,7 @@ function testAddItem()
         'item-name',
         {
             ['url'] = 'http://item-url',
-            ['duration'] = 15,
+            ['stopAt'] = 15,
         },
         playlists
     )
@@ -47,7 +47,7 @@ function testAddItem()
         'item-name',
         {
             ['file'] = 'item-file',
-            ['start'] = 20,
+            ['startAt'] = 20,
         },
         playlists
     )
@@ -190,8 +190,8 @@ function testCompileItem()
     local workItems = {}
     local workItem = {
         ['file'] = 'file',
-        ['duration'] = 15,
-        ['start'] = 5,
+        ['stopAt'] = 15,
+        ['startAt'] = 5,
     }
     playlist.compileItem(workItem, workItems)
     lu.assertEquals(
@@ -203,16 +203,16 @@ function testCompileItem()
     workItem = {
         ['folder'] = 'tests',
         ['nbElements'] = 1,
-        ['duration'] = 15,
-        ['start'] = 5,
+        ['stopAt'] = 15,
+        ['startAt'] = 5,
     }
     playlist.compileItem(workItem, workItems)
     lu.assertEquals(
         {
             {
                 ['file'] = 'tests/work-item-1.lua',
-                ['duration'] = 15,
-                ['start'] = 5,
+                ['stopAt'] = 15,
+                ['startAt'] = 5,
             }
         },
         workItems

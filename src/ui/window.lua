@@ -22,8 +22,8 @@ vlcDialog -- Window (VLC Dialog) where forms will be shown
 -- Methods
 local
 delete, -- delete an existing window
-formConfiguration, -- prepare, add form ans show the window about configuration building
-formFileName, -- prepare, add form ans show the window about configurations
+formComposition, -- prepare, add form ans show the window about composition building
+formFileName, -- prepare, add form ans show the window about compositions
 formItemType, -- prepare, add form ans show the window about a type of item
 get, -- retrieve an existing window
 prepare, -- setup a new window
@@ -39,16 +39,16 @@ delete = function()
     end
 end
 
-formConfiguration = function()
+formComposition = function()
     i18n = i18nModule.getTranslations()
-    prepare(string.format(i18n.window.title.formConfiguration, context.wips.fileName))
+    prepare(string.format(i18n.window.title.formComposition, context.wips.fileName))
     uiFormItems.displayForm()
     show()
 end
 
 formFileName = function()
     i18n = i18nModule.getTranslations()
-    context.fillSavedConfigurations()
+    context.fillSavedCompositions()
     prepare(i18n.window.title.formFileName)
     uiFormFileName.displayForm()
     show()
@@ -90,7 +90,7 @@ end
 
 return {
     delete = delete,
-    formConfiguration = formConfiguration,
+    formComposition = formComposition,
     formFileName = formFileName,
     formItemType = formItemType,
     get = get,

@@ -116,7 +116,7 @@ end
 
 -- Transform item with a `folder` key into a list of items with a `file` key
 -- Taking care of custom options (randomization, ...)
--- Keep already set VLC options (duration, ...)
+-- Keep already set VLC options (stop at, ...)
 compileItem = function(workItem, workItems)
     -- If a folder is present ...
     if workItem['folder'] ~= nil then

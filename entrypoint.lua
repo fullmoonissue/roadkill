@@ -3,7 +3,7 @@ local window
 function descriptor()
     return {
         title = 'Roadkill',
-        version = '3.4.0',
+        version = '3.4.1',
         author = 'fullmoonissue',
         url = 'http://www.fullmoonissue.net/',
         shortdesc = 'Roadkill, VLC Extension';

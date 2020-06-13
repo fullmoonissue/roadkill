@@ -5,11 +5,11 @@ local time = 60
 function testOptionMethod()
     lu.assertEquals(
         'start-time=60',
-        _vlc_.optionMethod('start')(time)
+        _vlc_.optionMethod('startAt')(time)
     )
     lu.assertEquals(
         'stop-time=60',
-        _vlc_.optionMethod('duration')(time)
+        _vlc_.optionMethod('stopAt')(time)
     )
 end
 
