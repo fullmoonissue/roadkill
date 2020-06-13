@@ -10,7 +10,7 @@ function testIsValid()
                 ['file'] = 42
             },
             ['work-start'] = {
-                ['duration'] = 'duration',
+                ['stopAt'] = 'stopAt',
             },
             ['work-items'] = {
                 ['folder'] = 42,
@@ -22,7 +22,7 @@ function testIsValid()
                 ['url'] = 42
             },
             ['work-after-all'] = {
-                ['start'] = 'start'
+                ['startAt'] = 'startAt'
             },
         },
         messages
@@ -30,13 +30,13 @@ function testIsValid()
     table.sort(messages)
     lu.assertEquals(
         {
-            'Key "duration" must be a number in work-start',
             'Key "file" must be a string in work-before-all',
             'Key "folder" must be a string in work-items',
             'Key "loop" must be a number in work-items',
             'Key "nbElements" must be a number in work-items',
             'Key "random" must be a boolean in work-items',
-            'Key "start" must be a number in work-after-all',
+            'Key "startAt" must be a number in work-after-all',
+            'Key "stopAt" must be a number in work-start',
             'Key "url" must be a string in work-end'
         },
         messages
@@ -49,7 +49,7 @@ function testIsValid()
                 ['file'] = 'file'
             },
             ['work-start'] = {
-                ['duration'] = 1,
+                ['stopAt'] = 1,
             },
             ['work-items'] = {
                 ['folder'] = 'folder',
@@ -61,7 +61,7 @@ function testIsValid()
                 ['url'] = 'url'
             },
             ['work-after-all'] = {
-                ['start'] = 1
+                ['startAt'] = 1
             },
         },
         messages

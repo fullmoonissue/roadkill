@@ -4,20 +4,20 @@
 
 -- Fields
 local options = { -- VLC commands' options handled
-    -- VLC option to stop the stream at a certain number of seconds
-    {
-        option = 'duration',
-        method = function(duration)
-            return string.format('stop-time=%d', duration)
-        end
-    },
     -- VLC option to start the stream at a certain number of seconds
     {
-        option = 'start',
+        option = 'startAt',
         method = function(startAt)
             return string.format('start-time=%d', startAt)
         end
-    }
+    },
+    -- VLC option to stop the stream at a certain number of seconds
+    {
+        option = 'stopAt',
+        method = function(stopAt)
+            return string.format('stop-time=%d', stopAt)
+        end
+    },
 }
 
 -- Methods

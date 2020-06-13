@@ -14,29 +14,29 @@ local utils = require('src/utils')
 
 -- Fields
 local
-dropdownConfigurations, -- form list about the configurations
+dropdownCompositions, -- form list about the compositions
 i18n,
 inputFileName, -- form input text about the file name
 labelFeedbackCreate
 
 -- Methods
 local
-deleteConfiguration, -- delete an existing configuration
-displayForm, -- add the form about configurations
+deleteComposition, -- delete an existing composition
+displayForm, -- add the form about compositions
 en,
 fr,
-getConfigurationValue, -- retrieve the value of the selected configuration
+getCompositionValue, -- retrieve the value of the selected composition
 getFileNameValue, -- retrieve the value of the file name
-launchConfiguration, -- launch an existing configuration
+launchComposition, -- launch an existing composition
 saveFileName, -- save the file name
-updateConfiguration -- update an existing configuration
+updateComposition -- update an existing composition
 
 -- --- --- --
 --  Code   --
 -- --- --- --
 
-deleteConfiguration = function()
-    utils.deleteFile(string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, getConfigurationValue()))
+deleteComposition = function()
+    utils.deleteFile(string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, getCompositionValue()))
     require('src/ui/window').formFileName()
 end
 
@@ -52,22 +52,22 @@ displayForm = function()
         window:add_button(flag, 'en' == locale and en or fr, col, row)
     end
     row = row + 1
-    if 0 < #context.getSavedConfigurations() then
-        window:add_label(string.format('<b>%s</b>', i18n.name.form.label.existingConfigurations), 1, row, 4)
+    if 0 < #context.getSavedCompositions() then
+        window:add_label(string.format('<b>%s</b>', i18n.name.form.label.existingCompositions), 1, row, 4)
         row = row + 1
-        dropdownConfigurations = window:add_dropdown(1, row)
-        for index, savedConfiguration in ipairs(context.getSavedConfigurations()) do
-            dropdownConfigurations:add_value(savedConfiguration, index)
+        dropdownCompositions = window:add_dropdown(1, row)
+        for index, savedComposition in ipairs(context.getSavedCompositions()) do
+            dropdownCompositions:add_value(savedComposition, index)
         end
-        window:add_button(i18n.name.form.button.launch, launchConfiguration, 2, row)
-        window:add_button(i18n.name.form.button.update, updateConfiguration, 3, row)
-        window:add_button(i18n.name.form.button.delete, deleteConfiguration, 4, row)
+        window:add_button(i18n.name.form.button.launch, launchComposition, 2, row)
+        window:add_button(i18n.name.form.button.update, updateComposition, 3, row)
+        window:add_button(i18n.name.form.button.delete, deleteComposition, 4, row)
 
         row = row + 1
         colspan = 3
     end
 
-    window:add_label(string.format('<b>%s</b>', i18n.name.form.label.newConfiguration), 1, row, 1 + colspan)
+    window:add_label(string.format('<b>%s</b>', i18n.name.form.label.newComposition), 1, row, 1 + colspan)
     row = row + 1
     inputFileName = window:add_text_input('', 1, row)
     window:add_button(i18n.name.form.button.create, saveFileName, 2, row)
@@ -86,19 +86,19 @@ fr = function()
     require('src/ui/window').formFileName()
 end
 
-getConfigurationValue = function()
-    return context.getSavedConfigurations()[dropdownConfigurations:get_value()]
+getCompositionValue = function()
+    return context.getSavedCompositions()[dropdownCompositions:get_value()]
 end
 
 getFileNameValue = function()
     return inputFileName:get_text()
 end
 
-launchConfiguration = function()
-    local savedConfiguration = require(string.format('%s/%s', context.savesFolder, getConfigurationValue()))
-    if context.isValid(savedConfiguration) then
+launchComposition = function()
+    local savedComposition = require(string.format('%s/%s', context.savesFolder, getCompositionValue()))
+    if context.isValid(savedComposition) then
         local playlistItems = {}
-        playlist.compile(savedConfiguration, playlistItems)
+        playlist.compile(savedComposition, playlistItems)
         _vlc_.launch(playlistItems)
     end
 end
@@ -114,14 +114,14 @@ saveFileName = function()
             )
         )
     else
-        local isConfigurationAlreadyExisting = false
+        local isCompositionAlreadyExisting = false
         local folderPath = string.format('%s/%s', context.getPwd(), context.savesFolder)
-        for _, savedConfiguration in ipairs(_vlc_.readdir(folderPath)) do
-            if savedConfiguration == string.format('%s.lua', fileNameValue) then
-                isConfigurationAlreadyExisting = true
+        for _, savedComposition in ipairs(_vlc_.readdir(folderPath)) do
+            if savedComposition == string.format('%s.lua', fileNameValue) then
+                isCompositionAlreadyExisting = true
             end
         end
-        if isConfigurationAlreadyExisting then
+        if isCompositionAlreadyExisting then
             labelFeedbackCreate:set_text(
                 string.format(
                     '<span style="color:red;">%s</span>',
@@ -129,19 +129,19 @@ saveFileName = function()
                 )
             )
         else
-            context.wips.configuration = {}
+            context.wips.composition = {}
             context.wips.fileName = fileNameValue
 
-            require('src/ui/window').formConfiguration()
+            require('src/ui/window').formComposition()
         end
     end
 end
 
-updateConfiguration = function()
-    context.wips.configuration = require(string.format('%s/%s', context.savesFolder, getConfigurationValue()))
-    context.wips.fileName = getConfigurationValue()
+updateComposition = function()
+    context.wips.composition = require(string.format('%s/%s', context.savesFolder, getCompositionValue()))
+    context.wips.fileName = getCompositionValue()
 
-    require('src/ui/window').formConfiguration()
+    require('src/ui/window').formComposition()
 end
 
 -- --- --- --

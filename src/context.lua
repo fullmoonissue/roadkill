@@ -17,8 +17,8 @@ local itemTypes = {
 }
 local keyTypes = { -- Keys (and associated type) available in root keys
     file = 'string',
-    duration = 'number',
-    start = 'number',
+    startAt = 'number',
+    stopAt = 'number',
     folder = 'string',
     random = 'boolean',
     loop = 'number',
@@ -26,30 +26,30 @@ local keyTypes = { -- Keys (and associated type) available in root keys
     url = 'string',
 }
 local pwd = '' -- unknown at the beginning
-local rootKeys = { -- Root keys to put into the configuration table
+local rootKeys = { -- Root keys to put into the composition table
     'work-before-all',
     'work-start',
     'work-items',
     'work-end',
     'work-after-all'
 }
-local savedConfigurations = {}
+local savedCompositions = {}
 local savesFolder = 'saves'
 local wips = { -- These wip variables are the memory of the set values across windows
-    configuration = {},
+    composition = {},
     fileName = nil,
     formFile = {
         path = '',
-        duration = '',
-        start = '',
+        startAt = '',
+        stopAt = '',
     },
     formFolder = {
         path = '',
         random = '',
         loop = '',
         nbElements = '',
-        duration = '',
-        start = '',
+        startAt = '',
+        stopAt = '',
     },
     formUrl = {
         path = '',
@@ -61,9 +61,9 @@ local wips = { -- These wip variables are the memory of the set values across wi
 
 -- Methods
 local
-fillSavedConfigurations,
+fillSavedCompositions,
 getPwd,
-getSavedConfigurations,
+getSavedCompositions,
 isValid,
 setPwd
 
@@ -71,23 +71,23 @@ setPwd
 --  Code   --
 -- --- --- --
 
-fillSavedConfigurations = function()
-    savedConfigurations = {}
-    for _, savedConfiguration in ipairs(_vlc_.readdir(string.format('%s/%s', pwd, savesFolder))) do
-        if savedConfiguration ~= '.' and savedConfiguration ~= '..' and savedConfiguration ~= '.gitkeep' then
-            table.insert(savedConfigurations, string.sub(savedConfiguration, 0, -5))
+fillSavedCompositions = function()
+    savedCompositions = {}
+    for _, savedComposition in ipairs(_vlc_.readdir(string.format('%s/%s', pwd, savesFolder))) do
+        if savedComposition ~= '.' and savedComposition ~= '..' and savedComposition ~= '.gitkeep' then
+            table.insert(savedCompositions, string.sub(savedComposition, 0, -5))
         end
     end
 
-    table.sort(savedConfigurations)
+    table.sort(savedCompositions)
 end
 
 getPwd = function()
     return pwd
 end
 
-getSavedConfigurations = function()
-    return savedConfigurations
+getSavedCompositions = function()
+    return savedCompositions
 end
 
 isValid = function(config, messages)
@@ -122,9 +122,9 @@ end
 -- --- --- --
 
 return {
-    fillSavedConfigurations = fillSavedConfigurations,
+    fillSavedCompositions = fillSavedCompositions,
     getPwd = getPwd,
-    getSavedConfigurations = getSavedConfigurations,
+    getSavedCompositions = getSavedCompositions,
     isValid = isValid,
     itemTypes = itemTypes,
     keyTypes = keyTypes,

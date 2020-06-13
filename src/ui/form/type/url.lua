@@ -58,7 +58,7 @@ displayForm = function()
     inputPath = window:add_text_input(context.wips.formUrl['path'], 2, 1)
     labelFeedbackLocation = window:add_label('', 3, 1)
 
-    window:add_button(i18n.url.form.button.goBack, windowModule.formConfiguration, 1, 2)
+    window:add_button(i18n.url.form.button.goBack, windowModule.formComposition, 1, 2)
     window:add_button(
         context.wips.formUrl['path'] == '' and i18n.url.form.button.add or i18n.url.form.button.update,
         context.wips.formUrl['path'] == '' and add or update,

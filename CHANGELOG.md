@@ -1,9 +1,15 @@
 # Changelog
 
+* 3.4.1
+  * (i18n) Add translations for features from 3.4.0
+  * (i18n) Replace `duration` by `stop at` (to avoid confusion)
+  * (i18n) Replace `start` by `start at` (to keep the semantic with `stop at`)
+  * (i18n) Replace `exercice` by `item` (to generalize)
+  * (i18n) Replace `configuration` by `composition` (more precise)
 * 3.4.0
   * (Feature) Move elsewhere an item
   * (Feature) Duplicate an item
-  * (UI) Merge buttons actions into two lists
+  * (UI) Merge buttons (move, update, ...) into two lists
 * 3.3.1
   * (UI) Save not allowed if no items set
   * (UI) Block the creation of a configuration file which already exists

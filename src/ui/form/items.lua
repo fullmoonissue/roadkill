@@ -35,11 +35,11 @@ listRootKeyCurrent
 
 -- Methods
 local
-addItem, -- add a configured item to the configuration
+addItem, -- add a configured item to the composition
 applyComplexActionOnSelectedItem,
 applySimpleActionOnSelectedItem,
-configureItemTypeValues, -- set wip values and call the window item configuration
-displayForm, -- add the form about the creation of a configuration
+configureItemTypeValues, -- set wip values and call the window item composition
+displayForm, -- add the form about the creation of a composition
 fillListItems, -- fill the list
 getButtonListLabel,
 getRootKeyValue, -- retrieve the value of the root key
@@ -50,7 +50,7 @@ listWorkEnd,
 listWorkItems,
 listWorkStart,
 retrieveItemProperties,
-saveConfiguration, -- write the entries into a configuration file
+saveComposition, -- write the entries into a composition file
 updateItem
 
 -- --- --- --
@@ -58,9 +58,9 @@ updateItem
 -- --- --- --
 
 addItem = function()
-    table.insert(context.wips.configuration[context.wips.rootKey], retrieveItemProperties())
+    table.insert(context.wips.composition[context.wips.rootKey], retrieveItemProperties())
 
-    require('src/ui/window').formConfiguration()
+    require('src/ui/window').formComposition()
 end
 
 applyComplexActionOnSelectedItem = function()
@@ -69,8 +69,8 @@ applyComplexActionOnSelectedItem = function()
     local selectedItem
     local selectedItems = listItems:get_selection()
     local rootKey = listRootKeyCurrent
-    if context.wips.configuration[rootKey] ~= nil then
-        for index, item in ipairs(context.wips.configuration[rootKey]) do
+    if context.wips.composition[rootKey] ~= nil then
+        for index, item in ipairs(context.wips.composition[rootKey]) do
             if nil == selectedItem and selectedItems[index] ~= nil then
                 selectedItem = item
                 context.wips.position = index
@@ -84,26 +84,26 @@ applyComplexActionOnSelectedItem = function()
             local targetPosition = dropdownComplexActionsOnTarget:get_value()
             local position = dropdownComplexActionsOnPosition:get_value()
             if targetPosition >= 1 and position >= 1 then
-                local keptConfiguration = {}
+                local keptComposition = {}
                 local selectedItemInserted = false
 
-                if context.wips.configuration[context.rootKeys[targetPosition]] ~= nil then
-                    for index, item in pairs(context.wips.configuration[context.rootKeys[targetPosition]]) do
+                if context.wips.composition[context.rootKeys[targetPosition]] ~= nil then
+                    for index, item in pairs(context.wips.composition[context.rootKeys[targetPosition]]) do
                         if index == position then
                             selectedItemInserted = true
-                            table.insert(keptConfiguration, selectedItem)
+                            table.insert(keptComposition, selectedItem)
                         end
-                        table.insert(keptConfiguration, item)
+                        table.insert(keptComposition, item)
                     end
                     -- If the choose position is higher than the length of the rootKey count of elements
                     if not selectedItemInserted then
-                        table.insert(keptConfiguration, selectedItem)
+                        table.insert(keptComposition, selectedItem)
                     end
                 else
-                    table.insert(keptConfiguration, selectedItem)
+                    table.insert(keptComposition, selectedItem)
                 end
 
-                context.wips.configuration[context.rootKeys[targetPosition]] = keptConfiguration
+                context.wips.composition[context.rootKeys[targetPosition]] = keptComposition
 
                 local associatedButton = buttonsRootKey[targetPosition]
                 associatedButton:set_text(
@@ -115,15 +115,15 @@ applyComplexActionOnSelectedItem = function()
 
                 -- Shift
                 if 1 == dropdownComplexActionsOnSelectedItem:get_value() then
-                    keptConfiguration = {}
+                    keptComposition = {}
 
-                    for index, item in pairs(context.wips.configuration[rootKey]) do
+                    for index, item in pairs(context.wips.composition[rootKey]) do
                         if index ~= context.wips.position then
-                            table.insert(keptConfiguration, item)
+                            table.insert(keptComposition, item)
                         end
                     end
 
-                    context.wips.configuration[rootKey] = keptConfiguration
+                    context.wips.composition[rootKey] = keptComposition
 
                     buttonRootKeyClicked:set_text(
                         getButtonListLabel(
@@ -146,8 +146,8 @@ applySimpleActionOnSelectedItem = function()
     local selectedItem
     local selectedItems = listItems:get_selection()
     local rootKey = listRootKeyCurrent
-    if context.wips.configuration[rootKey] ~= nil then
-        for index, item in ipairs(context.wips.configuration[rootKey]) do
+    if context.wips.composition[rootKey] ~= nil then
+        for index, item in ipairs(context.wips.composition[rootKey]) do
             if nil == selectedItem and selectedItems[index] ~= nil then
                 selectedItem = item
                 context.wips.position = index
@@ -158,11 +158,11 @@ applySimpleActionOnSelectedItem = function()
     if selectedItem ~= nil then
         -- Move Up
         if 1 == dropdownSimpleActionsOnSelectedItem:get_value() then
-            for index, _ in ipairs(context.wips.configuration[rootKey]) do
+            for index, _ in ipairs(context.wips.composition[rootKey]) do
                 if index > 1 and selectedItems[index] ~= nil then
-                    local permutation = context.wips.configuration[rootKey][(index - 1)]
-                    context.wips.configuration[rootKey][(index - 1)] = context.wips.configuration[rootKey][index]
-                    context.wips.configuration[rootKey][index] = permutation
+                    local permutation = context.wips.composition[rootKey][(index - 1)]
+                    context.wips.composition[rootKey][(index - 1)] = context.wips.composition[rootKey][index]
+                    context.wips.composition[rootKey][index] = permutation
                 end
             end
 
@@ -170,11 +170,11 @@ applySimpleActionOnSelectedItem = function()
             fillListItems(rootKey)
         -- Move Down
         elseif 2 == dropdownSimpleActionsOnSelectedItem:get_value() then
-            for index = #context.wips.configuration[rootKey], 1, -1 do
-                if index < #context.wips.configuration[rootKey] and selectedItems[index] ~= nil then
-                    local permutation = context.wips.configuration[rootKey][(index + 1)]
-                    context.wips.configuration[rootKey][(index + 1)] = context.wips.configuration[rootKey][index]
-                    context.wips.configuration[rootKey][index] = permutation
+            for index = #context.wips.composition[rootKey], 1, -1 do
+                if index < #context.wips.composition[rootKey] and selectedItems[index] ~= nil then
+                    local permutation = context.wips.composition[rootKey][(index + 1)]
+                    context.wips.composition[rootKey][(index + 1)] = context.wips.composition[rootKey][index]
+                    context.wips.composition[rootKey][index] = permutation
                 end
             end
 
@@ -190,15 +190,15 @@ applySimpleActionOnSelectedItem = function()
                     random = selectedItem.random,
                     loop = selectedItem.loop,
                     nbElements = selectedItem.nbElements,
-                    duration = selectedItem.duration,
-                    start = selectedItem.start,
+                    startAt = selectedItem.startAt,
+                    stopAt = selectedItem.stopAt,
                 }
             elseif selectedItem.file ~= nil then
                 itemType = 'File'
                 context.wips.formFile = {
                     path = selectedItem.file,
-                    duration = selectedItem.duration,
-                    start = selectedItem.start,
+                    startAt = selectedItem.startAt,
+                    stopAt = selectedItem.stopAt,
                 }
             elseif selectedItem.url ~= nil then
                 itemType = 'Url'
@@ -213,17 +213,17 @@ applySimpleActionOnSelectedItem = function()
             require('src/ui/window').formItemType()
         -- Delete
         elseif 4 == dropdownSimpleActionsOnSelectedItem:get_value() then
-            if context.wips.configuration[rootKey] ~= nil then
+            if context.wips.composition[rootKey] ~= nil then
                 local index = 0
-                local keptWipConfiguration = {}
-                for _, item in ipairs(context.wips.configuration[rootKey]) do
+                local keptWipComposition = {}
+                for _, item in ipairs(context.wips.composition[rootKey]) do
                     index = index + 1
                     if selectedItems[index] == nil then
-                        table.insert(keptWipConfiguration, item)
+                        table.insert(keptWipComposition, item)
                     end
                 end
 
-                context.wips.configuration[rootKey] = keptWipConfiguration
+                context.wips.composition[rootKey] = keptWipComposition
 
                 listItems:clear()
                 fillListItems(rootKey)
@@ -308,28 +308,28 @@ displayForm = function()
 
     row = row + 1
 
-    window:add_label(string.format('<b>%s</b>', 'Actions'), 1, row)
+    window:add_label(string.format('<b>%s</b>', i18n.items.form.label.actions), 1, row)
 
     row = row + 1
 
     dropdownSimpleActionsOnSelectedItem = window:add_dropdown(1, row)
-    dropdownSimpleActionsOnSelectedItem:add_value('On selected item...', -1)
-    dropdownSimpleActionsOnSelectedItem:add_value('⬆ Move Up', 1)
-    dropdownSimpleActionsOnSelectedItem:add_value('⬇ Move Down', 2)
-    dropdownSimpleActionsOnSelectedItem:add_value('✏ Update', 3)
-    dropdownSimpleActionsOnSelectedItem:add_value('🗑️ Delete', 4)
+    dropdownSimpleActionsOnSelectedItem:add_value(i18n.items.form.dropdown.onSelectedItem, -1)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('⬆ %s', i18n.items.form.dropdown.moveUp), 1)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('⬇ %s', i18n.items.form.dropdown.moveDown), 2)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('✏ %s', i18n.items.form.dropdown.update), 3)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('🗑️ %s', i18n.items.form.dropdown.delete), 4)
 
-    window:add_button('Apply️', applySimpleActionOnSelectedItem, 2, row)
+    window:add_button(i18n.items.form.button.apply, applySimpleActionOnSelectedItem, 2, row)
 
     row = row + 1
 
     dropdownComplexActionsOnSelectedItem = window:add_dropdown(1, row)
-    dropdownComplexActionsOnSelectedItem:add_value('On selected item...', -1)
-    dropdownComplexActionsOnSelectedItem:add_value('📦 Shift', 1)
-    dropdownComplexActionsOnSelectedItem:add_value('➿ Duplicate', 2)
+    dropdownComplexActionsOnSelectedItem:add_value(i18n.items.form.dropdown.onSelectedItem, -1)
+    dropdownComplexActionsOnSelectedItem:add_value(string.format('📦 %s', i18n.items.form.dropdown.shift), 1)
+    dropdownComplexActionsOnSelectedItem:add_value(string.format('➿ %s', i18n.items.form.dropdown.duplicate), 2)
 
     dropdownComplexActionsOnTarget = window:add_dropdown(2, row)
-    dropdownComplexActionsOnTarget:add_value('To...', 1)
+    dropdownComplexActionsOnTarget:add_value(i18n.items.form.dropdown.to, 1)
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-before-all'], 1)
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-start'], 2)
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-items'], 3)
@@ -337,9 +337,9 @@ displayForm = function()
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-after-all'], 5)
 
     dropdownComplexActionsOnPosition = window:add_dropdown(3, row)
-    dropdownComplexActionsOnPosition:add_value('Position...', -1)
+    dropdownComplexActionsOnPosition:add_value(i18n.items.form.dropdown.position, -1)
     local maxItems = 0
-    for _, items in pairs(context.wips.configuration) do
+    for _, items in pairs(context.wips.composition) do
         if #items > maxItems then
             maxItems = #items
         end
@@ -348,18 +348,18 @@ displayForm = function()
         dropdownComplexActionsOnPosition:add_value(position, position)
     end
 
-    window:add_button('Apply️', applyComplexActionOnSelectedItem, 4, row)
+    window:add_button(i18n.items.form.button.apply, applyComplexActionOnSelectedItem, 4, row)
 
     row = row + 1
     window:add_button(i18n.items.form.button.backToDashboard, uiWindow.formFileName, 1, row)
     labelFeedbackSave = window:add_label('', 2, row, 3)
-    window:add_button(i18n.items.form.button.save, saveConfiguration, 5, row)
+    window:add_button(i18n.items.form.button.save, saveComposition, 5, row)
 end
 
 configureItemTypeValues = function()
     context.wips.rootKey = getRootKeyValue()
-    if context.wips.configuration[context.wips.rootKey] == nil then
-        context.wips.configuration[context.wips.rootKey] = {}
+    if context.wips.composition[context.wips.rootKey] == nil then
+        context.wips.composition[context.wips.rootKey] = {}
     end
     context.wips.itemType = getItemTypeValue()
 
@@ -368,8 +368,8 @@ end
 
 fillListItems = function(rootKey)
     local index = 0
-    if context.wips.configuration[rootKey] ~= nil then
-        for _, item in ipairs(context.wips.configuration[rootKey]) do
+    if context.wips.composition[rootKey] ~= nil then
+        for _, item in ipairs(context.wips.composition[rootKey]) do
             index = index + 1
             local toStringsItem = {}
             if item.folder ~= nil then
@@ -388,13 +388,13 @@ fillListItems = function(rootKey)
                     addSeparator = true
                     table.insert(toStringsItem, string.format('🔢 (%d)', item.nbElements))
                 end
-                if item.start ~= nil then
+                if item.startAt ~= nil then
                     addSeparator = true
-                    table.insert(toStringsItem, string.format('🎬 (%d)', item.start))
+                    table.insert(toStringsItem, string.format('🎬 (%d)', item.startAt))
                 end
-                if item.duration ~= nil then
+                if item.stopAt ~= nil then
                     addSeparator = true
-                    table.insert(toStringsItem, string.format('⏲️ (%d)', item.duration))
+                    table.insert(toStringsItem, string.format('⏲️ (%d)', item.stopAt))
                 end
                 if addSeparator then
                     table.insert(toStringsItem, '|')
@@ -403,11 +403,11 @@ fillListItems = function(rootKey)
             elseif item.file ~= nil then
                 table.insert(toStringsItem, '📄')
                 table.insert(toStringsItem, '|')
-                if item.start ~= nil then
-                    table.insert(toStringsItem, string.format('🎬 (%d)', item.start))
+                if item.startAt ~= nil then
+                    table.insert(toStringsItem, string.format('🎬 (%d)', item.startAt))
                 end
-                if item.duration ~= nil then
-                    table.insert(toStringsItem, string.format('⏲️ (%d)', item.duration))
+                if item.stopAt ~= nil then
+                    table.insert(toStringsItem, string.format('⏲️ (%d)', item.stopAt))
                 end
                 table.insert(toStringsItem, '|')
                 table.insert(toStringsItem, string.format('%s', item.file))
@@ -427,9 +427,9 @@ end
 getButtonListLabel = function(rootKey, textRootKey)
     return string.format(
         '(%d) %s',
-        nil == context.wips.configuration[rootKey]
+        nil == context.wips.composition[rootKey]
             and 0
-            or #context.wips.configuration[rootKey],
+            or #context.wips.composition[rootKey],
         textRootKey
     )
 end
@@ -501,26 +501,26 @@ retrieveItemProperties = function()
             item['nbElements'] = nbElements
         end
 
-        local duration = uiFormItemFolder.getDurationValue()
-        if duration ~= nil then
-            item['duration'] = duration
+        local startAt = uiFormItemFolder.getStartAtValue()
+        if startAt ~= nil then
+            item['startAt'] = startAt
         end
 
-        local start = uiFormItemFolder.getStartValue()
-        if start ~= nil then
-            item['start'] = start
+        local stopAt = uiFormItemFolder.getStopAtValue()
+        if stopAt ~= nil then
+            item['stopAt'] = stopAt
         end
     elseif 'File' == context.wips.itemType then
         item['file'] = uiFormItemFile.getPathValue()
 
-        local duration = uiFormItemFile.getDurationValue()
-        if duration ~= nil then
-            item['duration'] = duration
+        local startAt = uiFormItemFile.getStartAtValue()
+        if startAt ~= nil then
+            item['startAt'] = startAt
         end
 
-        local start = uiFormItemFile.getStartValue()
-        if start ~= nil then
-            item['start'] = start
+        local stopAt = uiFormItemFile.getStopAtValue()
+        if stopAt ~= nil then
+            item['stopAt'] = stopAt
         end
     elseif 'Url' == context.wips.itemType then
         item['url'] = uiFormItemUrl.getPathValue()
@@ -529,15 +529,15 @@ retrieveItemProperties = function()
     return item
 end
 
-saveConfiguration = function()
+saveComposition = function()
     i18n = i18nModule.getTranslations()
 
     local nbItemsInserted = 0
     local lines = { 'return {' }
     for _, rootKey in ipairs(context.rootKeys) do
-        if context.wips.configuration[rootKey] ~= nil then
+        if context.wips.composition[rootKey] ~= nil then
             table.insert(lines, string.format('%s[\'%s\'] = {', string.rep(' ', 4), rootKey))
-            for _, item in ipairs(context.wips.configuration[rootKey]) do
+            for _, item in ipairs(context.wips.composition[rootKey]) do
                 table.insert(lines, string.format('%s{', string.rep(' ', 8)))
                 for key, _ in pairs(context.keyTypes) do
                     if item[key] ~= nil then
@@ -583,14 +583,14 @@ saveConfiguration = function()
 end
 
 updateItem = function()
-    context.wips.configuration[context.wips.rootKey][context.wips.position] = retrieveItemProperties()
+    context.wips.composition[context.wips.rootKey][context.wips.position] = retrieveItemProperties()
     context.wips.formFile = {
         path = '',
-        duration = '',
-        start = '',
+        startAt = '',
+        stopAt = '',
     }
 
-    require('src/ui/window').formConfiguration()
+    require('src/ui/window').formComposition()
 end
 
 -- --- --- --
