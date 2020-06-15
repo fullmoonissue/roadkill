@@ -90,7 +90,9 @@ displayForm = function()
 
     window:add_button(i18n.formItemTypeFolder.button.goBack, windowModule.formComposition, 1, 7)
     window:add_button(
-        context.wips.formFolder['path'] == '' and i18n.formItemTypeFolder.button.add or i18n.formItemTypeFolder.button.update,
+        context.wips.formFolder['path'] == ''
+            and i18n.formItemTypeFolder.button.add
+            or i18n.formItemTypeFolder.button.update,
         context.wips.formFolder['path'] == '' and add or update,
         3,
         7
