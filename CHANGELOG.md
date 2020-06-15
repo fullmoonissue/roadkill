@@ -1,5 +1,8 @@
 # Changelog
 
+* 3.4.5
+  * (UI) Allow to save an empty composition (put in 3.3.1, reverted)
+  * (UI) Remove the feedback about the save of a composition (useless now)
 * 3.4.4
   * (UI) Add a label which indicates the current displayed list
   * (UI) Display a message if the imported composition is not valid

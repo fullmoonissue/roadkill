@@ -25,7 +25,6 @@ buttonWorkStart,
 dropdownRootKey, -- form dropdown about the root key
 dropdownItemType, -- form dropdown about the item type
 i18n,
-labelFeedbackSave, -- form label when a file is saved
 labelCurrentList,
 dropdownComplexActionsOnSelectedItem,
 dropdownComplexActionsOnPosition,
@@ -175,7 +174,7 @@ applySimpleActionOnSelectedItem = function()
             saveComposition()
             listItems:clear()
             fillListItems(rootKey)
-        -- Move Down
+            -- Move Down
         elseif 2 == dropdownSimpleActionsOnSelectedItem:get_value() then
             for index = #context.wips.composition[rootKey], 1, -1 do
                 if index < #context.wips.composition[rootKey] and selectedItems[index] ~= nil then
@@ -188,7 +187,7 @@ applySimpleActionOnSelectedItem = function()
             saveComposition()
             listItems:clear()
             fillListItems(rootKey)
-        -- Update
+            -- Update
         elseif 3 == dropdownSimpleActionsOnSelectedItem:get_value() then
             local itemType
             if selectedItem.folder ~= nil then
@@ -219,7 +218,7 @@ applySimpleActionOnSelectedItem = function()
             context.wips.itemType = itemType
 
             require('src/ui/window').formItemType()
-        -- Delete
+            -- Delete
         elseif 4 == dropdownSimpleActionsOnSelectedItem:get_value() then
             if context.wips.composition[rootKey] ~= nil then
                 local index = 0
@@ -370,7 +369,6 @@ displayForm = function()
 
     row = row + 1
     window:add_button(i18n.formComposition.button.backToDashboard, uiWindow.formFileName, 1, row)
-    labelFeedbackSave = window:add_label('', 2, row, 4)
     saveComposition()
 end
 
@@ -577,7 +575,6 @@ end
 saveComposition = function()
     i18n = i18nModule.getTranslations()
 
-    local nbItemsInserted = 0
     local lines = { 'return {' }
     for _, rootKey in ipairs(context.rootKeys) do
         if context.wips.composition[rootKey] ~= nil then
@@ -586,7 +583,6 @@ saveComposition = function()
                 table.insert(lines, string.format('%s{', string.rep(' ', 8)))
                 for key, _ in pairs(context.keyTypes) do
                     if item[key] ~= nil then
-                        nbItemsInserted = nbItemsInserted + 1
                         table.insert(
                             lines,
                             string.format(
@@ -605,19 +601,10 @@ saveComposition = function()
     end
     table.insert(lines, '}')
 
-    if 0 == nbItemsInserted then
-        labelFeedbackSave:set_text(
-            string.format(
-                '<span style="color:red;">%s</span>',
-                i18n.formComposition.error.noItemsNoSave
-            )
-        )
-    else
-        utils.createFile(
-            string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, context.wips.fileName),
-            table.concat(lines, "\n")
-        )
-    end
+    utils.createFile(
+        string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, context.wips.fileName),
+        table.concat(lines, "\n")
+    )
 end
 
 updateItem = function()
