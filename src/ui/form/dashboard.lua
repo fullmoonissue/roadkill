@@ -41,11 +41,12 @@ deleteComposition = function()
 end
 
 displayForm = function()
+    context.wips.composition = {}
     i18n = i18nModule.getTranslations()
     local window = require('src/ui/window').get()
     local row = 1
     local colspan = 1
-    window:add_label(string.format('<b>%s</b>', i18n.name.form.label.language), 1, row)
+    window:add_label(string.format('<b>%s</b>', i18n.formDashboard.label.language), 1, row)
     local col = 1
     for locale, flag in pairs(i18nModule.locales) do
         col = col + 1
@@ -53,24 +54,24 @@ displayForm = function()
     end
     row = row + 1
     if 0 < #context.getSavedCompositions() then
-        window:add_label(string.format('<b>%s</b>', i18n.name.form.label.existingCompositions), 1, row, 4)
+        window:add_label(string.format('<br /><b>%s</b>', i18n.formDashboard.label.existingCompositions), 1, row, 4)
         row = row + 1
         dropdownCompositions = window:add_dropdown(1, row)
         for index, savedComposition in ipairs(context.getSavedCompositions()) do
             dropdownCompositions:add_value(savedComposition, index)
         end
-        window:add_button(i18n.name.form.button.launch, launchComposition, 2, row)
-        window:add_button(i18n.name.form.button.update, updateComposition, 3, row)
-        window:add_button(i18n.name.form.button.delete, deleteComposition, 4, row)
+        window:add_button(i18n.formDashboard.button.launch, launchComposition, 2, row)
+        window:add_button(i18n.formDashboard.button.update, updateComposition, 3, row)
+        window:add_button(i18n.formDashboard.button.delete, deleteComposition, 4, row)
 
         row = row + 1
         colspan = 3
     end
 
-    window:add_label(string.format('<b>%s</b>', i18n.name.form.label.newComposition), 1, row, 1 + colspan)
+    window:add_label(string.format('<br /><b>%s</b>', i18n.formDashboard.label.newComposition), 1, row, 1 + colspan)
     row = row + 1
     inputFileName = window:add_text_input('', 1, row)
-    window:add_button(i18n.name.form.button.create, saveFileName, 2, row)
+    window:add_button(i18n.formDashboard.button.create, saveFileName, 2, row)
     labelFeedbackCreate = window:add_label('', 3, row, colspan > 1 and 2 or 1)
 end
 
@@ -110,7 +111,7 @@ saveFileName = function()
         labelFeedbackCreate:set_text(
             string.format(
                 '<span style="color:red;">%s</span>',
-                i18n.name.form.error.nameRequired
+                i18n.formDashboard.error.nameRequired
             )
         )
     else
@@ -125,7 +126,7 @@ saveFileName = function()
             labelFeedbackCreate:set_text(
                 string.format(
                     '<span style="color:red;">%s</span>',
-                    i18n.name.form.error.alreadyExists
+                    i18n.formDashboard.error.alreadyExists
                 )
             )
         else
@@ -138,8 +139,8 @@ saveFileName = function()
 end
 
 updateComposition = function()
-    context.wips.composition = require(string.format('%s/%s', context.savesFolder, getCompositionValue()))
     context.wips.fileName = getCompositionValue()
+    context.wips.composition = require(string.format('%s/%s', context.savesFolder, context.wips.fileName))
 
     require('src/ui/window').formComposition()
 end

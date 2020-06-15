@@ -1,5 +1,9 @@
 # Changelog
 
+* 3.4.2
+  * (i18n) Add references (to reuse translations)
+  * (i18n) Clean keys
+  * (UI) Add the forgotten last position to shift / duplicate
 * 3.4.1
   * (i18n) Add translations for features from 3.4.0
   * (i18n) Replace `duration` by `stop at` (to avoid confusion)

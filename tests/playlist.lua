@@ -2,7 +2,7 @@ local lu = require('luaunit')
 local playlist = require('src/playlist')
 
 -- Replace the texts in tests
-require('src/ui/i18n').getTranslations().playlistTexts = {
+require('src/ui/i18n').getTranslations().textInPlaylist = {
     ['work-before-all'] = 'text-work-before-all',
     ['work-start'] = 'text-work-start',
     ['work-items'] = 'text-work-items',
