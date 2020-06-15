@@ -1,5 +1,6 @@
 stds.roadkill = {
     globals = {
+        "_",
         "vlc",
 
         "descriptor",
@@ -7,6 +8,7 @@ stds.roadkill = {
         "close",
         "deactivate",
 
+        "testAuditI18N",
         "testIsValid",
         "testAddItem",
         "testAddItems",

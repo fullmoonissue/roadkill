@@ -58,13 +58,12 @@ formItemType = function()
     i18n = i18nModule.getTranslations()
     prepare(string.format(i18n.window.formItemType, i18n.textItemTypes[context.wips.itemType]))
 
-    if 'Folder' == context.wips.itemType then
-        uiFormItemFolder.displayForm()
-    elseif 'File' == context.wips.itemType then
-        uiFormItemFile.displayForm()
-    elseif 'Url' == context.wips.itemType then
-        uiFormItemUrl.displayForm()
-    end
+    local associationForm = {
+        Folder = uiFormItemFolder,
+        File = uiFormItemFile,
+        Url = uiFormItemUrl,
+    }
+    associationForm[context.wips.itemType].displayForm()
 
     show()
 end

@@ -278,15 +278,22 @@ local allTranslations = {
 }
 
 local subsituteReference, found
-subsituteReference = function(tables, references)
+subsituteReference = function(tables, references, notFounds)
+    if notFounds == nil then
+        notFounds = {}
+    end
     for key, properties in pairs(tables) do
         if 'string' == type(properties) then
             _, _, found = string.find(properties, '_%((%a+)%)')
             if found ~= nil then
+                if references[found] == nil then
+                    table.insert(notFounds, found)
+                    references[found] = ''
+                end
                 tables[key], _ = string.gsub(properties, '_%(' .. found .. '%)', references[found])
             end
         else
-            subsituteReference(properties, references)
+            subsituteReference(properties, references, notFounds)
         end
     end
 end
@@ -298,6 +305,7 @@ end
 local translations = allTranslations[locale]
 
 return {
+    allTranslations = allTranslations,
     locales = locales,
     getTranslations = function()
         return translations
@@ -306,4 +314,5 @@ return {
         locale = newLocale
         translations = allTranslations[locale]
     end,
+    subsituteReference = subsituteReference,
 }

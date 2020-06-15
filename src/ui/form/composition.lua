@@ -49,7 +49,10 @@ listWorkBeforeAll,
 listWorkEnd,
 listWorkItems,
 listWorkStart,
+retrieveFileProperties,
+retrieveFolderProperties,
 retrieveItemProperties,
+retrieveUrlProperties,
 saveComposition, -- write the entries into a composition file
 updateItem
 
@@ -407,13 +410,18 @@ fillListItems = function(rootKey)
             elseif item.file ~= nil then
                 table.insert(toStringsItem, '📄')
                 table.insert(toStringsItem, '|')
+                local addSeparator = false
                 if item.startAt ~= nil then
+                    addSeparator = true
                     table.insert(toStringsItem, string.format('🎬 (%d)', item.startAt))
                 end
                 if item.stopAt ~= nil then
+                    addSeparator = true
                     table.insert(toStringsItem, string.format('⏲️ (%d)', item.stopAt))
                 end
-                table.insert(toStringsItem, '|')
+                if addSeparator then
+                    table.insert(toStringsItem, '|')
+                end
                 table.insert(toStringsItem, string.format('%s', item.file))
             elseif item.url ~= nil then
                 table.insert(toStringsItem, '🔗')
@@ -487,50 +495,67 @@ listWorkStart = function()
 end
 
 retrieveItemProperties = function()
+    local associationMethod = {
+        Folder = retrieveFolderProperties,
+        File = retrieveFileProperties,
+        Url = retrieveUrlProperties,
+    }
+
+    return associationMethod[context.wips.itemType]()
+end
+
+retrieveFileProperties = function()
     local item = {}
-    if 'Folder' == context.wips.itemType then
-        item['folder'] = uiFormItemFolder.getPathValue()
+    item['file'] = uiFormItemFile.getPathValue()
 
-        if uiFormItemFolder.getRandomValue() then
-            item['random'] = true
-        end
+    local startAt = uiFormItemFile.getStartAtValue()
+    if startAt ~= nil then
+        item['startAt'] = startAt
+    end
 
-        local loop = uiFormItemFolder.getLoopValue()
-        if loop ~= nil then
-            item['loop'] = loop
-        end
-
-        local nbElements = uiFormItemFolder.getNbElementsValue()
-        if nbElements ~= nil then
-            item['nbElements'] = nbElements
-        end
-
-        local startAt = uiFormItemFolder.getStartAtValue()
-        if startAt ~= nil then
-            item['startAt'] = startAt
-        end
-
-        local stopAt = uiFormItemFolder.getStopAtValue()
-        if stopAt ~= nil then
-            item['stopAt'] = stopAt
-        end
-    elseif 'File' == context.wips.itemType then
-        item['file'] = uiFormItemFile.getPathValue()
-
-        local startAt = uiFormItemFile.getStartAtValue()
-        if startAt ~= nil then
-            item['startAt'] = startAt
-        end
-
-        local stopAt = uiFormItemFile.getStopAtValue()
-        if stopAt ~= nil then
-            item['stopAt'] = stopAt
-        end
-    elseif 'Url' == context.wips.itemType then
-        item['url'] = uiFormItemUrl.getPathValue()
+    local stopAt = uiFormItemFile.getStopAtValue()
+    if stopAt ~= nil then
+        item['stopAt'] = stopAt
     end
 
     return item
+end
+
+retrieveFolderProperties = function()
+    local item = {}
+    item['folder'] = uiFormItemFolder.getPathValue()
+
+    if uiFormItemFolder.getRandomValue() then
+        item['random'] = true
+    end
+
+    local loop = uiFormItemFolder.getLoopValue()
+    if loop ~= nil then
+        item['loop'] = loop
+    end
+
+    local nbElements = uiFormItemFolder.getNbElementsValue()
+    if nbElements ~= nil then
+        item['nbElements'] = nbElements
+    end
+
+    local startAt = uiFormItemFolder.getStartAtValue()
+    if startAt ~= nil then
+        item['startAt'] = startAt
+    end
+
+    local stopAt = uiFormItemFolder.getStopAtValue()
+    if stopAt ~= nil then
+        item['stopAt'] = stopAt
+    end
+
+    return item
+end
+
+retrieveUrlProperties = function()
+    return {
+        url = uiFormItemUrl.getPathValue()
+    }
 end
 
 saveComposition = function()

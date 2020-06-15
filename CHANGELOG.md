@@ -1,5 +1,8 @@
 # Changelog
 
+* 3.4.3
+  * (Troubleshooting) Add an element about multiple actions on list
+  * (Test) Add an audit about the catalog of translations
 * 3.4.2
   * (i18n) Add references (to reuse translations)
   * (i18n) Clean keys
@@ -44,6 +47,7 @@
   * (BC Break) The commands to setup the extension have changed
   * (Clean) Split code across multiple files (require() problem fixed)
   * (Clean) Split tests across multiple files (require() problem fixed)
+  * (Doc) Add `Troubleshooting` section in the README
 * 2.5.0
   * (Feature) Customize item's text displayed in vlc
 * 2.4.1
