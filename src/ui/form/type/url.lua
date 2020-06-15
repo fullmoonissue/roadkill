@@ -29,7 +29,7 @@ update
 
 add = function()
     if isFormValid() then
-        require('src/ui/form/items').addItem()
+        require('src/ui/form/composition').addItem()
     end
 end
 
@@ -39,7 +39,7 @@ isFormValid = function()
         labelFeedbackLocation:set_text(
             string.format(
                 '<span style="color:red;">%s</span>',
-                i18n.url.form.error.pathRequired
+                i18n.formItemTypeUrl.error.pathRequired
             )
         )
 
@@ -54,13 +54,13 @@ displayForm = function()
     local windowModule = require('src/ui/window')
     local window = windowModule.get()
 
-    window:add_label(i18n.url.form.label.path, 1, 1)
+    window:add_label(i18n.formItemTypeUrl.label.path, 1, 1)
     inputPath = window:add_text_input(context.wips.formUrl['path'], 2, 1)
     labelFeedbackLocation = window:add_label('', 3, 1)
 
-    window:add_button(i18n.url.form.button.goBack, windowModule.formComposition, 1, 2)
+    window:add_button(i18n.formItemTypeUrl.button.goBack, windowModule.formComposition, 1, 2)
     window:add_button(
-        context.wips.formUrl['path'] == '' and i18n.url.form.button.add or i18n.url.form.button.update,
+        context.wips.formUrl['path'] == '' and i18n.formItemTypeUrl.button.add or i18n.formItemTypeUrl.button.update,
         context.wips.formUrl['path'] == '' and add or update,
         3,
         2
@@ -73,7 +73,7 @@ end
 
 update = function()
     if isFormValid() then
-        require('src/ui/form/items').updateItem()
+        require('src/ui/form/composition').updateItem()
     end
 end
 

@@ -240,7 +240,7 @@ displayForm = function()
     local window = uiWindow.get()
 
     local row = 1
-    window:add_label(string.format('<b>%s</b>', i18n.items.form.label.addItem), 1, row)
+    window:add_label(string.format('<b>%s</b>', i18n.formComposition.label.addItem), 1, row)
 
     row = row + 1
     dropdownRootKey = window:add_dropdown(1, row)
@@ -255,10 +255,10 @@ displayForm = function()
         dropdownItemType:add_value(i18n.textItemTypes[labelType], index)
     end
 
-    window:add_button(i18n.items.form.button.configureType, configureItemTypeValues, 3, row)
+    window:add_button(i18n.formComposition.button.configureType, configureItemTypeValues, 3, row)
 
     row = row + 1
-    window:add_label(string.format('<b>%s</b>', i18n.items.form.label.listItems), 1, row, 2)
+    window:add_label(string.format('<br /><b>%s</b>', i18n.formComposition.label.listItems), 1, row, 2)
     row = row + 1
     local col = 1
     buttonWorkBeforeAll = window:add_button(
@@ -308,28 +308,28 @@ displayForm = function()
 
     row = row + 1
 
-    window:add_label(string.format('<b>%s</b>', i18n.items.form.label.actions), 1, row)
+    window:add_label(string.format('<br /><b>%s</b>', i18n.formComposition.label.actions), 1, row)
 
     row = row + 1
 
     dropdownSimpleActionsOnSelectedItem = window:add_dropdown(1, row)
-    dropdownSimpleActionsOnSelectedItem:add_value(i18n.items.form.dropdown.onSelectedItem, -1)
-    dropdownSimpleActionsOnSelectedItem:add_value(string.format('⬆ %s', i18n.items.form.dropdown.moveUp), 1)
-    dropdownSimpleActionsOnSelectedItem:add_value(string.format('⬇ %s', i18n.items.form.dropdown.moveDown), 2)
-    dropdownSimpleActionsOnSelectedItem:add_value(string.format('✏ %s', i18n.items.form.dropdown.update), 3)
-    dropdownSimpleActionsOnSelectedItem:add_value(string.format('🗑️ %s', i18n.items.form.dropdown.delete), 4)
+    dropdownSimpleActionsOnSelectedItem:add_value(i18n.formComposition.dropdown.onSelectedItem, -1)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('⬆ %s', i18n.formComposition.dropdown.moveUp), 1)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('⬇ %s', i18n.formComposition.dropdown.moveDown), 2)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('✏ %s', i18n.formComposition.dropdown.update), 3)
+    dropdownSimpleActionsOnSelectedItem:add_value(string.format('🗑️ %s', i18n.formComposition.dropdown.delete), 4)
 
-    window:add_button(i18n.items.form.button.apply, applySimpleActionOnSelectedItem, 2, row)
+    window:add_button(i18n.formComposition.button.apply, applySimpleActionOnSelectedItem, 2, row)
 
     row = row + 1
 
     dropdownComplexActionsOnSelectedItem = window:add_dropdown(1, row)
-    dropdownComplexActionsOnSelectedItem:add_value(i18n.items.form.dropdown.onSelectedItem, -1)
-    dropdownComplexActionsOnSelectedItem:add_value(string.format('📦 %s', i18n.items.form.dropdown.shift), 1)
-    dropdownComplexActionsOnSelectedItem:add_value(string.format('➿ %s', i18n.items.form.dropdown.duplicate), 2)
+    dropdownComplexActionsOnSelectedItem:add_value(i18n.formComposition.dropdown.onSelectedItem, -1)
+    dropdownComplexActionsOnSelectedItem:add_value(string.format('📦 %s', i18n.formComposition.dropdown.shift), 1)
+    dropdownComplexActionsOnSelectedItem:add_value(string.format('➿ %s', i18n.formComposition.dropdown.duplicate), 2)
 
     dropdownComplexActionsOnTarget = window:add_dropdown(2, row)
-    dropdownComplexActionsOnTarget:add_value(i18n.items.form.dropdown.to, 1)
+    dropdownComplexActionsOnTarget:add_value(i18n.formComposition.dropdown.to, 1)
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-before-all'], 1)
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-start'], 2)
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-items'], 3)
@@ -337,23 +337,27 @@ displayForm = function()
     dropdownComplexActionsOnTarget:add_value(i18n.textRootKeys['work-after-all'], 5)
 
     dropdownComplexActionsOnPosition = window:add_dropdown(3, row)
-    dropdownComplexActionsOnPosition:add_value(i18n.items.form.dropdown.position, -1)
+    dropdownComplexActionsOnPosition:add_value(i18n.formComposition.dropdown.position, -1)
     local maxItems = 0
     for _, items in pairs(context.wips.composition) do
         if #items > maxItems then
             maxItems = #items
         end
     end
-    for position = 1, maxItems do
+    for position = 1, maxItems + 1 do
         dropdownComplexActionsOnPosition:add_value(position, position)
     end
 
-    window:add_button(i18n.items.form.button.apply, applyComplexActionOnSelectedItem, 4, row)
+    window:add_button(i18n.formComposition.button.apply, applyComplexActionOnSelectedItem, 4, row)
 
     row = row + 1
-    window:add_button(i18n.items.form.button.backToDashboard, uiWindow.formFileName, 1, row)
+
+    window:add_label('<br />', 1, row)
+
+    row = row + 1
+    window:add_button(i18n.formComposition.button.backToDashboard, uiWindow.formFileName, 1, row)
     labelFeedbackSave = window:add_label('', 2, row, 3)
-    window:add_button(i18n.items.form.button.save, saveComposition, 5, row)
+    window:add_button(i18n.formComposition.button.save, saveComposition, 5, row)
 end
 
 configureItemTypeValues = function()
@@ -564,7 +568,7 @@ saveComposition = function()
         labelFeedbackSave:set_text(
             string.format(
                 '<span style="color:red;">%s</span>',
-                i18n.items.form.error.noItemsNoSave
+                i18n.formComposition.error.noItemsNoSave
             )
         )
     else
@@ -576,7 +580,7 @@ saveComposition = function()
         labelFeedbackSave:set_text(
             string.format(
                 '<span style="color:green;">%s</span>',
-                i18n.items.form.success.fileSaved
+                i18n.formComposition.success.fileSaved
             )
         )
     end

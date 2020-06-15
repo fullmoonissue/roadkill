@@ -4,8 +4,8 @@
 
 local context = require('src/context')
 local i18nModule = require('src/ui/i18n')
-local uiFormFileName = require('src/ui/form/name')
-local uiFormItems = require('src/ui/form/items')
+local uiDashboard = require('src/ui/form/dashboard')
+local uiComposition = require('src/ui/form/composition')
 local uiFormItemFile = require('src/ui/form/type/file')
 local uiFormItemFolder = require('src/ui/form/type/folder')
 local uiFormItemUrl = require('src/ui/form/type/url')
@@ -41,22 +41,22 @@ end
 
 formComposition = function()
     i18n = i18nModule.getTranslations()
-    prepare(string.format(i18n.window.title.formComposition, context.wips.fileName))
-    uiFormItems.displayForm()
+    prepare(string.format(i18n.window.formComposition, context.wips.fileName))
+    uiComposition.displayForm()
     show()
 end
 
 formFileName = function()
     i18n = i18nModule.getTranslations()
     context.fillSavedCompositions()
-    prepare(i18n.window.title.formFileName)
-    uiFormFileName.displayForm()
+    prepare(i18n.window.formDashboard)
+    uiDashboard.displayForm()
     show()
 end
 
 formItemType = function()
     i18n = i18nModule.getTranslations()
-    prepare(string.format(i18n.window.title.formItemType, i18n.textItemTypes[context.wips.itemType]))
+    prepare(string.format(i18n.window.formItemType, i18n.textItemTypes[context.wips.itemType]))
 
     if 'Folder' == context.wips.itemType then
         uiFormItemFolder.displayForm()
@@ -77,7 +77,7 @@ prepare = function(title)
     i18n = i18nModule.getTranslations()
     delete()
     vlcDialog = vlc.dialog('')
-    vlcDialog:set_title(string.format(i18n.window.title.all, title))
+    vlcDialog:set_title(string.format(i18n.window.prefix, title))
 end
 
 show = function()

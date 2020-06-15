@@ -39,7 +39,7 @@ update
 
 add = function()
     if isFormValid() then
-        require('src/ui/form/items').addItem()
+        require('src/ui/form/composition').addItem()
     end
 end
 
@@ -49,7 +49,7 @@ isFormValid = function()
         labelFeedbackLocation:set_text(
             string.format(
                 '<span style="color:red;">%s</span>',
-                i18n.folder.form.error.pathRequired
+                i18n.formItemTypeFolder.error.pathRequired
             )
         )
 
@@ -64,33 +64,33 @@ displayForm = function()
     local windowModule = require('src/ui/window')
     local window = windowModule.get()
 
-    window:add_label(i18n.folder.form.label.path, 1, 1)
+    window:add_label(i18n.formItemTypeFolder.label.path, 1, 1)
     inputPath = window:add_text_input(context.wips.formFolder['path'], 2, 1)
     labelFeedbackLocation = window:add_label('', 3, 1)
 
-    window:add_label(i18n.folder.form.label.random, 1, 2)
+    window:add_label(i18n.formItemTypeFolder.label.random, 1, 2)
     checkboxRandom = window:add_check_box(
-        i18n.folder.form.checkbox.yes,
+        i18n.formItemTypeFolder.checkbox.yes,
         true == context.wips.formFolder['random'],
         2,
         2
     )
 
-    window:add_label(i18n.folder.form.label.loop, 1, 3)
+    window:add_label(i18n.formItemTypeFolder.label.loop, 1, 3)
     inputLoop = window:add_text_input(context.wips.formFolder['loop'], 2, 3)
 
-    window:add_label(i18n.folder.form.label.nbElements, 1, 4)
+    window:add_label(i18n.formItemTypeFolder.label.nbElements, 1, 4)
     inputNbElements = window:add_text_input(context.wips.formFolder['nbElements'], 2, 4)
 
-    window:add_label(i18n.folder.form.label.startAt, 1, 5)
+    window:add_label(i18n.formItemTypeFolder.label.startAt, 1, 5)
     inputStartAt = window:add_text_input(context.wips.formFolder['startAt'], 2, 5)
 
-    window:add_label(i18n.folder.form.label.stopAt, 1, 6)
+    window:add_label(i18n.formItemTypeFolder.label.stopAt, 1, 6)
     inputStopAt = window:add_text_input(context.wips.formFolder['stopAt'], 2, 6)
 
-    window:add_button(i18n.folder.form.button.goBack, windowModule.formComposition, 1, 7)
+    window:add_button(i18n.formItemTypeFolder.button.goBack, windowModule.formComposition, 1, 7)
     window:add_button(
-        context.wips.formFolder['path'] == '' and i18n.folder.form.button.add or i18n.folder.form.button.update,
+        context.wips.formFolder['path'] == '' and i18n.formItemTypeFolder.button.add or i18n.formItemTypeFolder.button.update,
         context.wips.formFolder['path'] == '' and add or update,
         3,
         7
@@ -123,7 +123,7 @@ end
 
 update = function()
     if isFormValid() then
-        require('src/ui/form/items').updateItem()
+        require('src/ui/form/composition').updateItem()
     end
 end
 
