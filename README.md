@@ -56,7 +56,7 @@ Neither with VLC options nor with embedded url containing query parameters (ex. 
 
 **I try to make many list actions (ex: move up then update) in a row but only the first action works**
 
-When a row is selected in the list and an action is perform (ex: move up), the list is cleared then refilled (to update entries), the item selected is lost at this moment.
+When a row is selected in the list and an action is perform (ex: move up), the list is cleared then refilled (to update entries), the item selection is lost at this moment.
 You have to select an other time the item you want to make an action on.
 
 ## Development

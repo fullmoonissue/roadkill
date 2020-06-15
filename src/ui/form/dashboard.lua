@@ -17,7 +17,7 @@ local
 dropdownCompositions, -- form list about the compositions
 i18n,
 inputFileName, -- form input text about the file name
-labelFeedbackCreate
+labelFeedbackComposition
 
 -- Methods
 local
@@ -72,7 +72,7 @@ displayForm = function()
     row = row + 1
     inputFileName = window:add_text_input('', 1, row)
     window:add_button(i18n.formDashboard.button.create, saveFileName, 2, row)
-    labelFeedbackCreate = window:add_label('', 3, row, colspan > 1 and 2 or 1)
+    labelFeedbackComposition = window:add_label('', 3, row, colspan > 1 and 2 or 1)
 end
 
 en = function()
@@ -101,6 +101,13 @@ launchComposition = function()
         local playlistItems = {}
         playlist.compile(savedComposition, playlistItems)
         _vlc_.launch(playlistItems)
+    else
+        labelFeedbackComposition:set_text(
+            string.format(
+                '<span style="color:red;">%s</span>',
+                i18n.formDashboard.error.compositionNotValid
+            )
+        )
     end
 end
 
@@ -108,7 +115,7 @@ saveFileName = function()
     i18n = i18nModule.getTranslations()
     local fileNameValue = getFileNameValue()
     if fileNameValue == '' then
-        labelFeedbackCreate:set_text(
+        labelFeedbackComposition:set_text(
             string.format(
                 '<span style="color:red;">%s</span>',
                 i18n.formDashboard.error.nameRequired
@@ -123,7 +130,7 @@ saveFileName = function()
             end
         end
         if isCompositionAlreadyExisting then
-            labelFeedbackCreate:set_text(
+            labelFeedbackComposition:set_text(
                 string.format(
                     '<span style="color:red;">%s</span>',
                     i18n.formDashboard.error.alreadyExists
