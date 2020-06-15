@@ -78,9 +78,6 @@ local allTranslations = {
                 to = 'To',
                 update = '_(update)',
             },
-            error = {
-                noItemsNoSave = 'No item to save',
-            },
             label = {
                 actions = 'Actions',
                 addItem = 'Add an item',
@@ -209,9 +206,6 @@ local allTranslations = {
                 shift = 'Déplacer',
                 to = 'Vers',
                 update = '_(update)',
-            },
-            error = {
-                noItemsNoSave = 'Aucun élément à sauvegarder',
             },
             label = {
                 actions = 'Actions',
