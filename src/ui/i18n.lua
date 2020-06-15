@@ -52,6 +52,7 @@ local allTranslations = {
             },
             error = {
                 alreadyExists = 'This name already exists',
+                compositionNotValid = 'Composition not valid',
                 nameRequired = 'Name required',
             },
             label = {
@@ -65,7 +66,6 @@ local allTranslations = {
                 apply = 'Apply',
                 backToDashboard = 'Back to dashboard',
                 configureType = 'Configure',
-                save = 'Save',
             },
             dropdown = {
                 delete = '_(delete)',
@@ -80,9 +80,6 @@ local allTranslations = {
             },
             error = {
                 noItemsNoSave = 'No item to save',
-            },
-            success = {
-                fileSaved = 'File saved',
             },
             label = {
                 actions = 'Actions',
@@ -187,6 +184,7 @@ local allTranslations = {
             },
             error = {
                 alreadyExists = 'Ce nom existe déjà',
+                compositionNotValid = 'Composition non valide',
                 nameRequired = 'Nom requis',
             },
             label = {
@@ -200,7 +198,6 @@ local allTranslations = {
                 apply = 'Appliquer',
                 backToDashboard = 'Retour au tableau de bord',
                 configureType = 'Configurer',
-                save = 'Sauvegarder',
             },
             dropdown = {
                 delete = '_(delete)',
@@ -215,9 +212,6 @@ local allTranslations = {
             },
             error = {
                 noItemsNoSave = 'Aucun élément à sauvegarder',
-            },
-            success = {
-                fileSaved = 'Fichier sauvegardé',
             },
             label = {
                 actions = 'Actions',

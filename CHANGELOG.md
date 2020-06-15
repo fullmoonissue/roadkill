@@ -1,5 +1,9 @@
 # Changelog
 
+* 3.4.4
+  * (UI) Add a label which indicates the current displayed list
+  * (UI) Display a message if the imported composition is not valid
+  * (UI) Auto-save
 * 3.4.3
   * (Troubleshooting) Add an element about multiple actions on list
   * (Test) Add an audit about the catalog of translations

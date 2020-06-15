@@ -26,6 +26,7 @@ dropdownRootKey, -- form dropdown about the root key
 dropdownItemType, -- form dropdown about the item type
 i18n,
 labelFeedbackSave, -- form label when a file is saved
+labelCurrentList,
 dropdownComplexActionsOnSelectedItem,
 dropdownComplexActionsOnPosition,
 dropdownComplexActionsOnTarget,
@@ -62,6 +63,7 @@ updateItem
 
 addItem = function()
     table.insert(context.wips.composition[context.wips.rootKey], retrieveItemProperties())
+    saveComposition()
 
     require('src/ui/window').formComposition()
 end
@@ -136,6 +138,7 @@ applyComplexActionOnSelectedItem = function()
                     )
                 end
 
+                saveComposition()
                 listItems:clear()
                 fillListItems(rootKey)
             end
@@ -169,6 +172,7 @@ applySimpleActionOnSelectedItem = function()
                 end
             end
 
+            saveComposition()
             listItems:clear()
             fillListItems(rootKey)
         -- Move Down
@@ -181,6 +185,7 @@ applySimpleActionOnSelectedItem = function()
                 end
             end
 
+            saveComposition()
             listItems:clear()
             fillListItems(rootKey)
         -- Update
@@ -228,6 +233,7 @@ applySimpleActionOnSelectedItem = function()
 
                 context.wips.composition[rootKey] = keptWipComposition
 
+                saveComposition()
                 listItems:clear()
                 fillListItems(rootKey)
                 buttonRootKeyClicked:set_text(getButtonListLabel(rootKey, i18n.textRootKeys[rootKey]))
@@ -305,6 +311,11 @@ displayForm = function()
         buttonWorkEnd,
         buttonWorkAfterAll,
     }
+
+    row = row + 1
+
+    labelCurrentList = window:add_label('', 1, row, 5)
+
     row = row + 1
 
     listItems = window:add_list(1, row, 5)
@@ -359,8 +370,8 @@ displayForm = function()
 
     row = row + 1
     window:add_button(i18n.formComposition.button.backToDashboard, uiWindow.formFileName, 1, row)
-    labelFeedbackSave = window:add_label('', 2, row, 3)
-    window:add_button(i18n.formComposition.button.save, saveComposition, 5, row)
+    labelFeedbackSave = window:add_label('', 2, row, 4)
+    saveComposition()
 end
 
 configureItemTypeValues = function()
@@ -458,6 +469,7 @@ listWorkAfterAll = function()
     local currentRootKey = 'work-after-all'
     listRootKeyCurrent = currentRootKey
     buttonRootKeyClicked = buttonWorkAfterAll
+    labelCurrentList:set_text(i18n.textRootKeys[currentRootKey])
     listItems:clear()
     fillListItems(currentRootKey)
 end
@@ -466,6 +478,7 @@ listWorkBeforeAll = function()
     local currentRootKey = 'work-before-all'
     listRootKeyCurrent = currentRootKey
     buttonRootKeyClicked = buttonWorkBeforeAll
+    labelCurrentList:set_text(i18n.textRootKeys[currentRootKey])
     listItems:clear()
     fillListItems(currentRootKey)
 end
@@ -474,6 +487,7 @@ listWorkEnd = function()
     local currentRootKey = 'work-end'
     listRootKeyCurrent = currentRootKey
     buttonRootKeyClicked = buttonWorkEnd
+    labelCurrentList:set_text(i18n.textRootKeys[currentRootKey])
     listItems:clear()
     fillListItems(currentRootKey)
 end
@@ -482,6 +496,7 @@ listWorkItems = function()
     local currentRootKey = 'work-items'
     listRootKeyCurrent = currentRootKey
     buttonRootKeyClicked = buttonWorkItems
+    labelCurrentList:set_text(i18n.textRootKeys[currentRootKey])
     listItems:clear()
     fillListItems(currentRootKey)
 end
@@ -490,6 +505,7 @@ listWorkStart = function()
     local currentRootKey = 'work-start'
     listRootKeyCurrent = currentRootKey
     buttonRootKeyClicked = buttonWorkStart
+    labelCurrentList:set_text(i18n.textRootKeys[currentRootKey])
     listItems:clear()
     fillListItems(currentRootKey)
 end
@@ -600,13 +616,6 @@ saveComposition = function()
         utils.createFile(
             string.format('%s/%s/%s.lua', context.getPwd(), context.savesFolder, context.wips.fileName),
             table.concat(lines, "\n")
-        )
-
-        labelFeedbackSave:set_text(
-            string.format(
-                '<span style="color:green;">%s</span>',
-                i18n.formComposition.success.fileSaved
-            )
         )
     end
 end
