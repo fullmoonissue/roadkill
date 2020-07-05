@@ -1,5 +1,7 @@
 # Changelog
 
+* 3.4.6
+  * (UI) Fix (auto-)save, error on boolean values
 * 3.4.5
   * (UI) Allow to save an empty composition (put in 3.3.1, reverted)
   * (UI) Remove the feedback about the save of a composition (useless now)
