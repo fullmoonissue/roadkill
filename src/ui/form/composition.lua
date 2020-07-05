@@ -583,15 +583,27 @@ saveComposition = function()
                 table.insert(lines, string.format('%s{', string.rep(' ', 8)))
                 for key, _ in pairs(context.keyTypes) do
                     if item[key] ~= nil then
-                        table.insert(
-                            lines,
-                            string.format(
-                                '%s[\'%s\'] = \'%s\',',
-                                string.rep(' ', 12),
-                                key,
-                                item[key]
+                        if true == item[key] or false == item[key] then
+                            table.insert(
+                                lines,
+                                string.format(
+                                    '%s[\'%s\'] = %s,',
+                                    string.rep(' ', 12),
+                                    key,
+                                    tostring(item[key])
+                                )
                             )
-                        )
+                        else
+                            table.insert(
+                                lines,
+                                string.format(
+                                    '%s[\'%s\'] = \'%s\',',
+                                    string.rep(' ', 12),
+                                    key,
+                                    item[key]
+                                )
+                            )
+                        end
                     end
                 end
                 table.insert(lines, string.format('%s},', string.rep(' ', 8)))
