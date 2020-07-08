@@ -1,5 +1,7 @@
 # Changelog
 
+* 3.4.7
+  * (UI) Fix (auto-)save, error on integer values
 * 3.4.6
   * (UI) Fix (auto-)save, error on boolean values
 * 3.4.5
